@@ -19,10 +19,22 @@ namespace MIProject
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        // Initializing Objects used in the game
+        Texture2D sand,diamond,stone,player;
+        Rectangle  rectanglesand,rectangleDiamond,rectanglePlayer,rectangleStone;
+        List<Rectangle> rectangles = new List<Rectangle>();
+        List<Rectangle> diamonds = new List<Rectangle>();
+        List<Rectangle> stones = new List<Rectangle>();
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            /// Changing resolution to 800x600
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
         }
 
         /// <summary>
@@ -48,6 +60,36 @@ namespace MIProject
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            
+            // Load sand and draw the rectangles
+            sand = Content.Load<Texture2D>("sand2");
+            diamond = Content.Load<Texture2D>("diamond");
+            stone = Content.Load<Texture2D>("stone");
+            player = Content.Load<Texture2D>("Mario0");
+
+            rectanglePlayer = new Rectangle(300, 100, 100, 100);
+            for(int i=0 ; i<800 ; i+=100)
+            {
+                for (int j = 0; j < 600; j+=100 )
+                {
+                    if(i%300 == 0 && j%400 == 0 && i != j)
+                    {
+                        rectangleDiamond = new Rectangle(i, j, 100, 100);
+                        diamonds.Add(rectangleDiamond);
+                    }
+                    else if(i%200 == 0 && j % 500 == 0)
+                    {
+                        rectangleStone = new Rectangle(i, j, 100, 100);
+                        stones.Add(rectangleStone);
+                    }
+                    else
+                    {
+                        rectanglesand = new Rectangle(i, j, 100, 100);
+                        rectangles.Add(rectanglesand);
+                    }
+                }
+                    
+            }
         }
 
         /// <summary>
@@ -81,9 +123,29 @@ namespace MIProject
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
+
+            // Drawing sand & Mush
+
+            spriteBatch.Begin();
+
+            for (int i = 0; i < rectangles.Count; i++)
+            {
+                spriteBatch.Draw(sand, rectangles[i], Color.White);
+            }
+            for (int i = 0; i < diamonds.Count; i++)
+            {
+                spriteBatch.Draw(diamond, diamonds[i], Color.White);
+            }
+            for (int i = 0; i < stones.Count; i++)
+            {
+                spriteBatch.Draw(stone, stones[i], Color.White);
+            }
+            spriteBatch.Draw(player, rectanglePlayer, Color.White);
+            spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
