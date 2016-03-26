@@ -19,13 +19,18 @@ namespace MIProject
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        const int WINDOW_WIDTH = 800;
+        const int WINDOW_HEIGHT = 600;
+
         // Initializing Objects used in the game
         Texture2D sand,diamond,stone,player;
         Rectangle  rectanglesand,rectangleDiamond,rectanglePlayer,rectangleStone;
         List<Rectangle> rectangles = new List<Rectangle>();
         List<Rectangle> diamonds = new List<Rectangle>();
         List<Rectangle> stones = new List<Rectangle>();
-
+        KeyboardState oldKeyboardState;
+        
+        
 
         public Game1()
         {
@@ -33,8 +38,9 @@ namespace MIProject
             Content.RootDirectory = "Content";
 
             /// Changing resolution to 800x600
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -46,6 +52,7 @@ namespace MIProject
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            oldKeyboardState = Keyboard.GetState();
 
             base.Initialize();
         }
@@ -67,7 +74,8 @@ namespace MIProject
             stone = Content.Load<Texture2D>("stone");
             player = Content.Load<Texture2D>("Mario0");
 
-            rectanglePlayer = new Rectangle(300, 100, 100, 100);
+            // Initializing rectangles for drawings
+            rectanglePlayer = new Rectangle(400, 200, 100, 100);
             for(int i=0 ; i<800 ; i+=100)
             {
                 for (int j = 0; j < 600; j+=100 )
@@ -112,9 +120,75 @@ namespace MIProject
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            UpdateMarioKeyboard();
+
             // TODO: Add your update logic here
+            // Make Mario follow mouse
+            /*MouseState mouseState = Mouse.GetState();
+            rectanglePlayer.X = mouseState.X - rectanglePlayer.Width /2;
+            rectanglePlayer.Y = mouseState.Y - rectanglePlayer.Height / 2;
+            
+            // Limit movement of mario to within window
+            if (rectanglePlayer.Left < 0) rectanglePlayer.X = 0;
+            if (rectanglePlayer.Right > WINDOW_WIDTH) rectanglePlayer.X = WINDOW_WIDTH - rectanglePlayer.Width;
+            if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
+            if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;*/
+
+
 
             base.Update(gameTime);
+        }
+
+
+        private void UpdateMarioKeyboard()
+        {
+            // Make Mario follow Keyboard
+            KeyboardState newkeyboardState = Keyboard.GetState();
+
+            // If the left key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Left))
+            {
+                // If it was just pressed
+                if (!oldKeyboardState.IsKeyDown(Keys.Left))
+                    rectanglePlayer.X -= 10;
+                else
+                    rectanglePlayer.X -= 5;
+            }
+            // If the right key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Right))
+            {
+                // If it was just pressed
+                if (!oldKeyboardState.IsKeyDown(Keys.Right))
+                    rectanglePlayer.X += 10;
+                else
+                    rectanglePlayer.X += 5;
+            }
+            // If the up key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Up))
+            {
+                // If it was just pressed
+                if (!oldKeyboardState.IsKeyDown(Keys.Up))
+                    rectanglePlayer.Y -= 10;
+                else
+                    rectanglePlayer.Y -= 5;
+            }
+            // If the down key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Down))
+            {
+                // If it was just pressed
+                if (!oldKeyboardState.IsKeyDown(Keys.Down))
+                    rectanglePlayer.Y += 10;
+                else
+                    rectanglePlayer.Y += 5;
+            }
+
+            // Limit movement of mario to within window
+            if (rectanglePlayer.Left < 0) rectanglePlayer.X = 0;
+            if (rectanglePlayer.Right > WINDOW_WIDTH) rectanglePlayer.X = WINDOW_WIDTH - rectanglePlayer.Width;
+            if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
+            if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;
+
+
         }
 
         /// <summary>
