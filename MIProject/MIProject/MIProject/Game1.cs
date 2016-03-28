@@ -29,6 +29,8 @@ namespace MIProject
         List<Rectangle> diamonds = new List<Rectangle>();
         List<Rectangle> stones = new List<Rectangle>();
         KeyboardState oldKeyboardState;
+        bool isMarioFlipped = false;
+        Texture3D tryMario;
         
         
 
@@ -73,6 +75,7 @@ namespace MIProject
             diamond = Content.Load<Texture2D>("diamond");
             stone = Content.Load<Texture2D>("stone");
             player = Content.Load<Texture2D>("Mario0");
+            tryMario = Content.Load<Texture3D>("Mario0");
 
             // Initializing rectangles for drawings
             rectanglePlayer = new Rectangle(400, 200, 100, 100);
@@ -140,6 +143,29 @@ namespace MIProject
         }
 
 
+        // This function lets mario face the opposite direction
+        public static Texture2D Flip(Texture2D source, bool vertical, bool horizontal)
+        {
+            Texture2D flipped = new Texture2D(source.GraphicsDevice, source.Width, source.Height);
+            Color[] data = new Color[source.Width * source.Height];
+            Color[] flippedData = new Color[data.Length];
+
+            source.GetData<Color>(data);
+
+            for (int x = 0; x < source.Width; x++)
+                for (int y = 0; y < source.Height; y++)
+                {
+                    int idx = (horizontal ? source.Width - 1 - x : x) + ((vertical ? source.Height - 1 - y : y) * source.Width);
+                    flippedData[x + y * source.Width] = data[idx];
+                }
+
+            flipped.SetData<Color>(flippedData);
+
+            return flipped;
+        }  
+
+
+
         private void UpdateMarioKeyboard()
         {
             // Make Mario follow Keyboard
@@ -150,18 +176,35 @@ namespace MIProject
             {
                 // If it was just pressed
                 if (!oldKeyboardState.IsKeyDown(Keys.Left))
-                    rectanglePlayer.X -= 10;
+                {
+                    rectanglePlayer.X -= 10;                
+                }
                 else
+                {
                     rectanglePlayer.X -= 5;
+                }
+
+                if (!isMarioFlipped)
+                {
+                    player = Flip(player, false, true);
+                    isMarioFlipped = true;
+                }
             }
             // If the right key is pressed
             if (newkeyboardState.IsKeyDown(Keys.Right))
             {
                 // If it was just pressed
                 if (!oldKeyboardState.IsKeyDown(Keys.Right))
+                {
                     rectanglePlayer.X += 10;
+                }
                 else
                     rectanglePlayer.X += 5;
+                if (isMarioFlipped)
+                {
+                    player = Flip(player, false, true);
+                    isMarioFlipped = false;
+                }
             }
             // If the up key is pressed
             if (newkeyboardState.IsKeyDown(Keys.Up))
@@ -187,7 +230,7 @@ namespace MIProject
             if (rectanglePlayer.Right > WINDOW_WIDTH) rectanglePlayer.X = WINDOW_WIDTH - rectanglePlayer.Width;
             if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
             if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;
-
+            
 
         }
 
