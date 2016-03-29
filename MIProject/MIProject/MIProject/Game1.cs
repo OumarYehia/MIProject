@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -19,30 +20,62 @@ namespace MIProject
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        const int WINDOW_WIDTH = 800;
-        const int WINDOW_HEIGHT = 600;
+        int WINDOW_WIDTH = 800;
+        int WINDOW_HEIGHT = 600;
 
         // Initializing Objects used in the game
-        Texture2D sand,diamond,stone,player;
-        Rectangle  rectanglesand,rectangleDiamond,rectanglePlayer,rectangleStone;
+        Texture2D sand , diamond , stone , player , concrete;
+        Rectangle  rectanglesand , rectangleDiamond , rectanglePlayer , rectangleStone , rectangleConcrete;
         List<Rectangle> rectangles = new List<Rectangle>();
         List<Rectangle> diamonds = new List<Rectangle>();
         List<Rectangle> stones = new List<Rectangle>();
+        List<Rectangle> concretes = new List<Rectangle>();
         KeyboardState oldKeyboardState;
         bool isMarioFlipped = false;
-        Texture3D tryMario;
-        
         
 
-        public Game1()
+        // Variables
+        int marioX, marioY;
+        int diamondsCount;
+        List<int> diamondsLocations;
+        int rocksCount;
+        List<int> rocksLocations;
+        int concreteCount;
+        List<int> concreteLocations;
+
+
+        public Game1(int width, int height, int mariox, int marioy, int diamondsCounter,List<int>diamondsLoc,
+                                    int rocksCounter, List<int> rocksLocs, int concreteCounter, List<int> concreteLocs)
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            /// Changing resolution to 800x600
+
+
+
+
+            //Initializing Variables();
+            WINDOW_WIDTH = width;
+            WINDOW_HEIGHT = height;
+            marioX = mariox; marioY = marioy;
+            diamondsCount = diamondsCounter;
+            diamondsLocations = new List<int>(diamondsCount * 2);
+            diamondsLocations = diamondsLoc;
+            rocksCount = rocksCounter;
+            rocksLocations = new List<int>(rocksCount * 2);
+            rocksLocations = rocksLocs;
+
+            concreteCount = concreteCounter;
+            concreteLocations = new List<int>(concreteCount * 2);
+            concreteLocations = concreteLocs;
+
+            
+            /// Changing resolution 
             graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
             graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
             IsMouseVisible = true;
+
+
         }
 
         /// <summary>
@@ -75,32 +108,37 @@ namespace MIProject
             diamond = Content.Load<Texture2D>("diamond");
             stone = Content.Load<Texture2D>("stone");
             player = Content.Load<Texture2D>("Mario0");
-            tryMario = Content.Load<Texture3D>("Mario0");
+            concrete = Content.Load<Texture2D>("metalwall");
 
-            // Initializing rectangles for drawings
-            rectanglePlayer = new Rectangle(400, 200, 100, 100);
-            for(int i=0 ; i<800 ; i+=100)
+            for (int i = 0; i < 800; i+=100 )
             {
                 for (int j = 0; j < 600; j+=100 )
                 {
-                    if(i%300 == 0 && j%400 == 0 && i != j)
-                    {
-                        rectangleDiamond = new Rectangle(i, j, 100, 100);
-                        diamonds.Add(rectangleDiamond);
-                    }
-                    else if(i%200 == 0 && j % 500 == 0)
-                    {
-                        rectangleStone = new Rectangle(i, j, 100, 100);
-                        stones.Add(rectangleStone);
-                    }
-                    else
-                    {
-                        rectanglesand = new Rectangle(i, j, 100, 100);
-                        rectangles.Add(rectanglesand);
-                    }
+                    rectanglesand = new Rectangle(i, j, 100, 100);
+                    rectangles.Add(rectanglesand);
                 }
                     
             }
+
+                // Initializing rectangles for drawings
+                rectanglePlayer = new Rectangle(marioX, marioY, 100, 100);
+            for (int i = 0; i < diamondsCount * 2; i+=2 )
+            {
+                rectangleDiamond = new Rectangle(diamondsLocations[i], diamondsLocations[i+1], 100, 100);
+                diamonds.Add(rectangleDiamond);
+            }
+            for (int i = 0; i < rocksCount * 2; i += 2)
+            {
+                rectangleStone = new Rectangle(rocksLocations[i], rocksLocations[i + 1], 100, 100);
+                stones.Add(rectangleStone);
+            }
+            for (int i = 0; i < concreteCount * 2; i += 2)
+            {
+                rectangleConcrete = new Rectangle(concreteLocations[i], concreteLocations[i + 1], 100, 100);
+                concretes.Add(rectangleConcrete);
+            }
+
+
         }
 
         /// <summary>
@@ -136,8 +174,6 @@ namespace MIProject
             if (rectanglePlayer.Right > WINDOW_WIDTH) rectanglePlayer.X = WINDOW_WIDTH - rectanglePlayer.Width;
             if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
             if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;*/
-
-
 
             base.Update(gameTime);
         }
@@ -260,7 +296,11 @@ namespace MIProject
             {
                 spriteBatch.Draw(stone, stones[i], Color.White);
             }
-            spriteBatch.Draw(player, rectanglePlayer, Color.White);
+            for (int i = 0; i < concretes.Count; i++ )
+            {
+                spriteBatch.Draw(concrete, concretes[i], Color.White);
+            }
+                spriteBatch.Draw(player, rectanglePlayer, Color.White);
             spriteBatch.End();
 
 
