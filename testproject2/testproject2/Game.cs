@@ -14,6 +14,13 @@ namespace testproject2
         private static List<Node> goals = new List<Node>();
         private static Node[,] nodeGrid = {};
 
+        public static Point InitialLocation
+        {
+            get
+            {
+                return initialLocation;
+            }
+        }
         public static Int32 MapXSize
         {
             get

@@ -5,7 +5,10 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace testproject2
 {
@@ -14,17 +17,6 @@ namespace testproject2
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            Game.LoadGame("input.txt");
-            InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
-            List<Node> path = Game.SolveAStar();
-            foreach (Node n in path)
-            {
-                dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = Color.Blue;
-            }
         }
 
         private void InitializeMapGrid(Node[,] NodeGrid, Int32 MapXSize, Int32 MapYSize)
@@ -43,6 +35,38 @@ namespace testproject2
             {
                 dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = n.NodeColor;
             }
+        }
+
+        private void LoadGame_Click(object sender, EventArgs e)
+        {
+            LoadGame.Enabled = false;
+            SolveAStar.Enabled = true;
+            Game.LoadGame("input.txt");
+            InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
+            dataGridView1.ClearSelection();
+        }
+
+        private void SolveAStar_Click(object sender, EventArgs e)
+        {
+            SolveAStar.Enabled = false;
+            List<Node> path = Game.SolveAStar();
+            new Thread (()=> {
+                Point currentPosition = Game.InitialLocation;
+                foreach (Node n in path)
+                {
+                    Dispatcher.CurrentDispatcher.Invoke(
+                    DispatcherPriority.Send,
+                    new Action(() =>
+                    {
+                        dataGridView1.Rows[currentPosition.Y].Cells[currentPosition.X].Style.BackColor = Color.White;
+                        dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = Color.Green;
+                    }));
+                    currentPosition.X = n.Position.X;
+                    currentPosition.Y = n.Position.Y;
+                    Thread.Sleep(500);
+                }
+            }).Start();
+            
         }
     }
 }
