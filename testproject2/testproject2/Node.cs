@@ -13,7 +13,7 @@ namespace testproject2
 
         public Point Position = new Point(0,0);
         public NodeType Type = NodeType.SAND;
-        public Boolean IsDangerous = false;
+        public Boolean IsDangerous = false, Visited = false;
         public Int32 gCost = 0, hCost = 0;
 
         public Node ParentNode = null;
@@ -55,12 +55,12 @@ namespace testproject2
 
         public void SetHCost(Point targetNodePosition)
         {
-            hCost = Game.GetDistance(this.Position, targetNodePosition);
+            hCost = Game.GetManhattanDistance(this.Position, targetNodePosition);
         }
 
         public void SetGCost(Point targetNodePosition)
         {
-            gCost = Game.GetDistance(this.Position, targetNodePosition);
+            gCost = Game.GetManhattanDistance(this.Position, targetNodePosition);
         }
         
     }

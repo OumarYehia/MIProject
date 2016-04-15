@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.LoadGame = new System.Windows.Forms.Button();
             this.SolveAStar = new System.Windows.Forms.Button();
+            this.SolveIDDFS = new System.Windows.Forms.Button();
+            this.IDDFSDepth = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IDDFSDepth)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -53,8 +57,8 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Transparent;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent;
+            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.Size = new System.Drawing.Size(584, 399);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.TabStop = false;
@@ -80,19 +84,62 @@
             this.SolveAStar.UseVisualStyleBackColor = true;
             this.SolveAStar.Click += new System.EventHandler(this.SolveAStar_Click);
             // 
+            // SolveIDDFS
+            // 
+            this.SolveIDDFS.Enabled = false;
+            this.SolveIDDFS.Location = new System.Drawing.Point(602, 114);
+            this.SolveIDDFS.Name = "SolveIDDFS";
+            this.SolveIDDFS.Size = new System.Drawing.Size(125, 38);
+            this.SolveIDDFS.TabIndex = 1;
+            this.SolveIDDFS.Text = "Iterative Deepening DFS";
+            this.SolveIDDFS.UseVisualStyleBackColor = true;
+            this.SolveIDDFS.Click += new System.EventHandler(this.SolveIDDFS_Click);
+            // 
+            // IDDFSDepth
+            // 
+            this.IDDFSDepth.Enabled = false;
+            this.IDDFSDepth.Location = new System.Drawing.Point(602, 88);
+            this.IDDFSDepth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.IDDFSDepth.Name = "IDDFSDepth";
+            this.IDDFSDepth.Size = new System.Drawing.Size(125, 20);
+            this.IDDFSDepth.TabIndex = 2;
+            this.IDDFSDepth.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(602, 73);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Max Depth:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(739, 423);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.IDDFSDepth);
+            this.Controls.Add(this.SolveIDDFS);
             this.Controls.Add(this.SolveAStar);
             this.Controls.Add(this.LoadGame);
             this.Controls.Add(this.dataGridView1);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IDDFSDepth)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -101,6 +148,9 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button LoadGame;
         private System.Windows.Forms.Button SolveAStar;
+        private System.Windows.Forms.Button SolveIDDFS;
+        private System.Windows.Forms.NumericUpDown IDDFSDepth;
+        private System.Windows.Forms.Label label1;
     }
 }
 

@@ -40,7 +40,7 @@ namespace testproject2
         private void LoadGame_Click(object sender, EventArgs e)
         {
             LoadGame.Enabled = false;
-            SolveAStar.Enabled = true;
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = true;
             Game.LoadGame("input.txt");
             InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
             dataGridView1.ClearSelection();
@@ -48,7 +48,7 @@ namespace testproject2
 
         private void SolveAStar_Click(object sender, EventArgs e)
         {
-            SolveAStar.Enabled = false;
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = false;
             List<Node> path = Game.SolveAStar();
             new Thread (()=> {
                 Point currentPosition = Game.InitialLocation;
@@ -66,7 +66,30 @@ namespace testproject2
                     Thread.Sleep(500);
                 }
             }).Start();
-            
         }
+
+        private void SolveIDDFS_Click(object sender, EventArgs e)
+        {
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = false;
+            List<Node> path = Game.SolveIDDFS(Convert.ToInt32(IDDFSDepth.Value));
+            new Thread(() =>
+            {
+                Point currentPosition = Game.InitialLocation;
+                foreach (Node n in path)
+                {
+                    Dispatcher.CurrentDispatcher.Invoke(
+                    DispatcherPriority.Send,
+                    new Action(() =>
+                    {
+                        dataGridView1.Rows[currentPosition.Y].Cells[currentPosition.X].Style.BackColor = Color.White;
+                        dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = Color.Green;
+                    }));
+                    currentPosition.X = n.Position.X;
+                    currentPosition.Y = n.Position.Y;
+                    Thread.Sleep(500);
+                }
+            }).Start();
+        }
+
     }
 }

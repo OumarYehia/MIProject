@@ -28,7 +28,6 @@ namespace testproject2
                 return mapXSize;
             }
         }
-
         public static Int32 MapYSize
         {
             get
@@ -36,7 +35,6 @@ namespace testproject2
                 return mapYSize;
             }
         }
-
         public static Node[,] NodeGrid
         {
             get
@@ -112,11 +110,11 @@ namespace testproject2
             {
                 Node closestGoal = Goals[0];
 
-                Int32 distanceToGoal = GetDistance(startingNode.Position, closestGoal.Position);
+                Int32 distanceToGoal = GetManhattanDistance(startingNode.Position, closestGoal.Position);
 
                 for (int i = 1; i < Goals.Count; i++)
                 {
-                    Int32 distanceToClosestGoalCandidate = GetDistance(startingNode.Position,Goals[i].Position);
+                    Int32 distanceToClosestGoalCandidate = GetManhattanDistance(startingNode.Position, Goals[i].Position);
                     if (distanceToClosestGoalCandidate < distanceToGoal)
                     {
                         distanceToGoal = distanceToClosestGoalCandidate;
@@ -198,6 +196,51 @@ namespace testproject2
             return path;
         }
 
+        public static List<Node> SolveIDDFS(Int32 maxDepth)
+        {
+            List<Node> path = new List<Node>();
+            for (int currentDepth = 0; currentDepth < maxDepth; currentDepth++)
+            {
+                List<Node> currentDepthPath = new List<Node>();
+
+                List<Node> visited = new List<Node>();
+                Stack<Node> stack = new Stack<Node>();
+ 
+                Node CurrentNode = nodeGrid[initialLocation.X, initialLocation.Y];
+
+                CurrentNode.Visited = true;
+
+                stack.Push(CurrentNode);
+                currentDepthPath.Add(CurrentNode);
+                visited.Add(CurrentNode);
+
+                while(stack.Count > 0)
+                {
+                    CurrentNode = stack.Pop();
+                    currentDepthPath.Add(CurrentNode);
+                    List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position);
+                    foreach (Node neighbour in neighbours)
+                    {
+                        if (!neighbour.Visited && GetManhattanDistance(initialLocation,neighbour.Position) <= currentDepth)
+                        {
+                            neighbour.Visited = true;
+                            stack.Push(neighbour);
+                            currentDepthPath.Add(neighbour);
+                            visited.Add(neighbour);
+                        }
+                    }
+                }
+                
+                foreach (Node v in visited)
+                {
+                    v.Visited = false;
+                }
+
+                path = currentDepthPath;
+            }
+            return path;
+        }
+
         private static List<Node> GetNodeWalkableNeighbours(Point nodePosition)
         {
             List<Node> neighbours = new List<Node>();
@@ -233,7 +276,7 @@ namespace testproject2
             return neighbours;
         }
 
-        public static Int32 GetDistance(Point a, Point b)
+        public static Int32 GetManhattanDistance(Point a, Point b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
