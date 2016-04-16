@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.LoadGame = new System.Windows.Forms.Button();
             this.SolveAStar = new System.Windows.Forms.Button();
@@ -64,8 +64,8 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Transparent;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Transparent;
+            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView1.Size = new System.Drawing.Size(584, 399);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.TabStop = false;
@@ -153,7 +153,6 @@
             this.PlayBackSpeed.LargeChange = 50;
             this.PlayBackSpeed.Location = new System.Drawing.Point(602, 207);
             this.PlayBackSpeed.Maximum = 1000;
-            this.PlayBackSpeed.Minimum = 1;
             this.PlayBackSpeed.Name = "PlayBackSpeed";
             this.PlayBackSpeed.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.PlayBackSpeed.RightToLeftLayout = true;
