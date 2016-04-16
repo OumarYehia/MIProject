@@ -92,6 +92,7 @@ namespace MIProject
             base.Initialize();
         }
 
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -107,9 +108,10 @@ namespace MIProject
             sand = Content.Load<Texture2D>("sand2");
             diamond = Content.Load<Texture2D>("diamond");
             stone = Content.Load<Texture2D>("stone");
-            player = Content.Load<Texture2D>("Mario0");
+            player = Content.Load<Texture2D>("Mario1");
             concrete = Content.Load<Texture2D>("metalwall");
 
+            // Drawing penetrable ground
             for (int i = 0; i < 800; i+=100 )
             {
                 for (int j = 0; j < 600; j+=100 )
@@ -137,7 +139,6 @@ namespace MIProject
                 rectangleConcrete = new Rectangle(concreteLocations[i], concreteLocations[i + 1], 100, 100);
                 concretes.Add(rectangleConcrete);
             }
-
 
         }
 
@@ -283,7 +284,6 @@ namespace MIProject
             // Drawing sand & Mush
 
             spriteBatch.Begin();
-
             for (int i = 0; i < rectangles.Count; i++)
             {
                 spriteBatch.Draw(sand, rectangles[i], Color.White);
@@ -300,7 +300,8 @@ namespace MIProject
             {
                 spriteBatch.Draw(concrete, concretes[i], Color.White);
             }
-                spriteBatch.Draw(player, rectanglePlayer, Color.White);
+                spriteBatch.Draw(player, rectanglePlayer, Color.Wheat);
+            
             spriteBatch.End();
 
 
