@@ -211,17 +211,17 @@ namespace testproject2
                 CurrentNode.Visited = true;
 
                 stack.Push(CurrentNode);
-                currentDepthPath.Add(CurrentNode);
                 visited.Add(CurrentNode);
 
                 while(stack.Count > 0)
                 {
                     CurrentNode = stack.Pop();
                     currentDepthPath.Add(CurrentNode);
-                    List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position);
+
+                    List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position, true);
                     foreach (Node neighbour in neighbours)
                     {
-                        if (!neighbour.Visited && GetManhattanDistance(initialLocation,neighbour.Position) <= currentDepth)
+                        if (GetManhattanDistance(initialLocation,neighbour.Position) <= currentDepth)
                         {
                             neighbour.Visited = true;
                             stack.Push(neighbour);
@@ -236,12 +236,52 @@ namespace testproject2
                     v.Visited = false;
                 }
 
+                Node StartingNode = currentDepthPath[0];
+                currentDepthPath.RemoveAt(0);
+                currentDepthPath.Add(StartingNode);
+
+                // Last iteration
                 path = currentDepthPath;
+                // All iterations
+                // path.AddRange(currentDepthPath);
             }
             return path;
         }
 
-        private static List<Node> GetNodeWalkableNeighbours(Point nodePosition)
+        public static List<Node> SolveCSP()
+        {
+            List<Node> path = new List<Node>();
+
+            Stack<Node> stack = new Stack<Node>();
+
+            Node CurrentNode = nodeGrid[initialLocation.X, initialLocation.Y];
+
+            CurrentNode.Visited = true;
+
+            stack.Push(CurrentNode);
+
+            while (stack.Count > 0)
+            {
+                CurrentNode = stack.Peek();
+                path.Add(CurrentNode);
+
+                List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position, true);
+                if(neighbours.Count > 0)
+                {
+                    Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                    neighbour.Visited = true;
+                    stack.Push(neighbour);
+                    path.Add(neighbour);
+                }
+                else
+                {
+                    CurrentNode = stack.Pop();
+                }
+            }
+            return path;
+        }
+
+        private static List<Node> GetNodeWalkableNeighbours(Point nodePosition, Boolean removeVisitedNodes = false)
         {
             List<Node> neighbours = new List<Node>();
             int neighbourX = 0, neighbourY = 0;
@@ -271,7 +311,8 @@ namespace testproject2
                         break;
 	            }
                 if (neighbourX > -1 && neighbourX < mapXSize && neighbourY > -1 && neighbourY < mapYSize && nodeGrid[neighbourX, neighbourY].IsWalkable && !nodeGrid[neighbourX, neighbourY].IsDangerous)
-                    neighbours.Add(nodeGrid[neighbourX, neighbourY]);
+                    if (!nodeGrid[neighbourX, neighbourY].Visited || !removeVisitedNodes)
+                        neighbours.Add(nodeGrid[neighbourX, neighbourY]);
             }
             return neighbours;
         }
@@ -280,5 +321,6 @@ namespace testproject2
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
+
     }
 }

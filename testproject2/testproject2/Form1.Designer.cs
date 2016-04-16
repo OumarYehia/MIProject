@@ -28,15 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.LoadGame = new System.Windows.Forms.Button();
             this.SolveAStar = new System.Windows.Forms.Button();
             this.SolveIDDFS = new System.Windows.Forms.Button();
             this.IDDFSDepth = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.SolveCSP = new System.Windows.Forms.Button();
+            this.PlayBackSpeed = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IDDFSDepth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PlayBackSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -57,8 +61,8 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Transparent;
+            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Size = new System.Drawing.Size(584, 399);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.TabStop = false;
@@ -122,12 +126,49 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Max Depth:";
             // 
+            // SolveCSP
+            // 
+            this.SolveCSP.Enabled = false;
+            this.SolveCSP.Location = new System.Drawing.Point(602, 158);
+            this.SolveCSP.Name = "SolveCSP";
+            this.SolveCSP.Size = new System.Drawing.Size(125, 23);
+            this.SolveCSP.TabIndex = 4;
+            this.SolveCSP.Text = "Constraint Satisfaction";
+            this.SolveCSP.UseVisualStyleBackColor = true;
+            this.SolveCSP.Click += new System.EventHandler(this.SolveCSP_Click);
+            // 
+            // PlayBackSpeed
+            // 
+            this.PlayBackSpeed.LargeChange = 50;
+            this.PlayBackSpeed.Location = new System.Drawing.Point(602, 207);
+            this.PlayBackSpeed.Maximum = 1000;
+            this.PlayBackSpeed.Minimum = 50;
+            this.PlayBackSpeed.Name = "PlayBackSpeed";
+            this.PlayBackSpeed.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.PlayBackSpeed.RightToLeftLayout = true;
+            this.PlayBackSpeed.Size = new System.Drawing.Size(125, 45);
+            this.PlayBackSpeed.TabIndex = 5;
+            this.PlayBackSpeed.TickFrequency = 50;
+            this.PlayBackSpeed.Value = 500;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(602, 191);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(85, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Playback Speed";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(739, 423);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.PlayBackSpeed);
+            this.Controls.Add(this.SolveCSP);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.IDDFSDepth);
             this.Controls.Add(this.SolveIDDFS);
@@ -138,6 +179,7 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IDDFSDepth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PlayBackSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -151,6 +193,9 @@
         private System.Windows.Forms.Button SolveIDDFS;
         private System.Windows.Forms.NumericUpDown IDDFSDepth;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button SolveCSP;
+        private System.Windows.Forms.TrackBar PlayBackSpeed;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -40,7 +40,7 @@ namespace testproject2
         private void LoadGame_Click(object sender, EventArgs e)
         {
             LoadGame.Enabled = false;
-            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = true;
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = SolveCSP.Enabled = true;
             Game.LoadGame("input.txt");
             InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
             dataGridView1.ClearSelection();
@@ -48,33 +48,26 @@ namespace testproject2
 
         private void SolveAStar_Click(object sender, EventArgs e)
         {
-            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = false;
-            List<Node> path = Game.SolveAStar();
-            new Thread (()=> {
-                Point currentPosition = Game.InitialLocation;
-                foreach (Node n in path)
-                {
-                    Dispatcher.CurrentDispatcher.Invoke(
-                    DispatcherPriority.Send,
-                    new Action(() =>
-                    {
-                        dataGridView1.Rows[currentPosition.Y].Cells[currentPosition.X].Style.BackColor = Color.White;
-                        dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = Color.Green;
-                    }));
-                    currentPosition.X = n.Position.X;
-                    currentPosition.Y = n.Position.Y;
-                    Thread.Sleep(500);
-                }
-            }).Start();
+            Animate(Game.SolveAStar());
         }
 
         private void SolveIDDFS_Click(object sender, EventArgs e)
         {
-            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = false;
-            List<Node> path = Game.SolveIDDFS(Convert.ToInt32(IDDFSDepth.Value));
+            Animate(Game.SolveIDDFS(Convert.ToInt32(IDDFSDepth.Value)));
+        }
+
+        private void SolveCSP_Click(object sender, EventArgs e)
+        {
+            Animate(Game.SolveCSP());
+        }
+
+        private void Animate(List<Node> path)
+        {
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = SolveCSP.Enabled = false;
             new Thread(() =>
             {
-                Point currentPosition = Game.InitialLocation;
+                Point currentPosition = new Point(Game.InitialLocation.X, Game.InitialLocation.Y);
+                Int32 speed = 0;
                 foreach (Node n in path)
                 {
                     Dispatcher.CurrentDispatcher.Invoke(
@@ -83,13 +76,28 @@ namespace testproject2
                     {
                         dataGridView1.Rows[currentPosition.Y].Cells[currentPosition.X].Style.BackColor = Color.White;
                         dataGridView1.Rows[n.Position.Y].Cells[n.Position.X].Style.BackColor = Color.Green;
+                        speed = GetTrackBarValue();
                     }));
                     currentPosition.X = n.Position.X;
                     currentPosition.Y = n.Position.Y;
-                    Thread.Sleep(500);
+                    Thread.Sleep(speed);
                 }
             }).Start();
         }
 
+        delegate int GetTrackBarValueCallback();
+
+        private int GetTrackBarValue()
+        {
+            if (PlayBackSpeed.InvokeRequired)
+            {
+                GetTrackBarValueCallback cb = new GetTrackBarValueCallback(GetTrackBarValue);
+                return (int)PlayBackSpeed.Invoke(cb);
+            }
+            else
+            {
+                return (int)PlayBackSpeed.Value;
+            }
+        }
     }
 }
