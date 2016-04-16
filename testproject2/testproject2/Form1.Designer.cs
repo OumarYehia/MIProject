@@ -49,6 +49,9 @@
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllHeaders;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -69,6 +72,7 @@
             // 
             // LoadGame
             // 
+            this.LoadGame.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.LoadGame.Location = new System.Drawing.Point(602, 12);
             this.LoadGame.Name = "LoadGame";
             this.LoadGame.Size = new System.Drawing.Size(125, 23);
@@ -79,6 +83,7 @@
             // 
             // SolveAStar
             // 
+            this.SolveAStar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SolveAStar.Enabled = false;
             this.SolveAStar.Location = new System.Drawing.Point(602, 41);
             this.SolveAStar.Name = "SolveAStar";
@@ -90,6 +95,7 @@
             // 
             // SolveIDDFS
             // 
+            this.SolveIDDFS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SolveIDDFS.Enabled = false;
             this.SolveIDDFS.Location = new System.Drawing.Point(602, 114);
             this.SolveIDDFS.Name = "SolveIDDFS";
@@ -101,6 +107,7 @@
             // 
             // IDDFSDepth
             // 
+            this.IDDFSDepth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.IDDFSDepth.Enabled = false;
             this.IDDFSDepth.Location = new System.Drawing.Point(602, 88);
             this.IDDFSDepth.Minimum = new decimal(new int[] {
@@ -119,6 +126,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(602, 73);
             this.label1.Name = "label1";
@@ -128,6 +136,7 @@
             // 
             // SolveCSP
             // 
+            this.SolveCSP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SolveCSP.Enabled = false;
             this.SolveCSP.Location = new System.Drawing.Point(602, 158);
             this.SolveCSP.Name = "SolveCSP";
@@ -139,10 +148,12 @@
             // 
             // PlayBackSpeed
             // 
+            this.PlayBackSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlayBackSpeed.Enabled = false;
             this.PlayBackSpeed.LargeChange = 50;
             this.PlayBackSpeed.Location = new System.Drawing.Point(602, 207);
             this.PlayBackSpeed.Maximum = 1000;
-            this.PlayBackSpeed.Minimum = 50;
+            this.PlayBackSpeed.Minimum = 1;
             this.PlayBackSpeed.Name = "PlayBackSpeed";
             this.PlayBackSpeed.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.PlayBackSpeed.RightToLeftLayout = true;
@@ -153,6 +164,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(602, 191);
             this.label2.Name = "label2";

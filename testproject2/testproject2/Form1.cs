@@ -40,7 +40,7 @@ namespace testproject2
         private void LoadGame_Click(object sender, EventArgs e)
         {
             LoadGame.Enabled = false;
-            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = SolveCSP.Enabled = true;
+            SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = SolveCSP.Enabled = PlayBackSpeed.Enabled = true;
             Game.LoadGame("../../input.txt");
             InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
             dataGridView1.ClearSelection();
