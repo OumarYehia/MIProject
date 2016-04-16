@@ -41,7 +41,7 @@ namespace testproject2
         {
             LoadGame.Enabled = false;
             SolveAStar.Enabled = SolveIDDFS.Enabled = IDDFSDepth.Enabled = SolveCSP.Enabled = true;
-            Game.LoadGame("input.txt");
+            Game.LoadGame("../../input.txt");
             InitializeMapGrid(Game.NodeGrid, Game.MapXSize, Game.MapYSize);
             dataGridView1.ClearSelection();
         }
