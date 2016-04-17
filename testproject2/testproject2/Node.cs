@@ -11,6 +11,7 @@ namespace testproject2
         private static Color[] NodeColors = { Color.Green, Color.Yellow, Color.White, Color.Red, Color.Gray, Color.Black };
         private static Boolean[] Walkability = { true, true, true, true, false, false };
 
+        // Fields
         public Point Position = new Point(0,0);
         public NodeType Type = NodeType.SAND;
         public Boolean IsDangerous = false, Visited = false;
@@ -18,6 +19,7 @@ namespace testproject2
 
         public Node ParentNode = null;
 
+        // Constructor
         public Node(Point position, NodeType type, Point startPosition)
         {
             UpdateNode(position, type, startPosition);
@@ -30,6 +32,7 @@ namespace testproject2
             SetGCost(startPosition);
         }
 
+        // Properties
         public Boolean IsWalkable {
             get
             {
@@ -53,6 +56,7 @@ namespace testproject2
             }
         }
 
+        // Cost Setters
         public void SetHCost(Point targetNodePosition)
         {
             hCost = Game.GetManhattanDistance(this.Position, targetNodePosition);

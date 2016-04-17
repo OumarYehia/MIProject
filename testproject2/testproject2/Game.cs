@@ -6,36 +6,65 @@ using System.Text;
 
 namespace testproject2
 {
-    public static class Game
+    public class Game
     {
-        private static Int32 mapXSize = 0, mapYSize = 0;
-        private static Point initialLocation = new Point(0, 0);
-        private static List<Point> diamonds = new List<Point>() { }, rocks = new List<Point>() { }, walls = new List<Point>() { };
-        private static List<Node> goals = new List<Node>();
-        private static Node[,] nodeGrid = {};
+        // Singleton
+        private static Game instance = null;
+        private Game()
+        {
+        }
 
-        public static Point InitialLocation
+        public static Game Instance
+        {
+            get
+            {
+                if (instance==null)
+                {
+                    instance = new Game();
+                }
+                return instance;
+            }
+        }
+
+        public static Game NewInstance
+        {
+            get
+            {
+                instance = new Game();
+                return instance;
+            }
+        }
+
+        // Fields
+        private Int32 mapXSize = 0, mapYSize = 0;
+        private Point initialLocation = new Point(0, 0);
+        private List<Point> diamonds = new List<Point>() { }, rocks = new List<Point>() { }, walls = new List<Point>() { };
+        private List<Node> goals = new List<Node>();
+        private Node[,] nodeGrid = {};
+
+        // Properties
+        public Point InitialLocation
         {
             get
             {
                 return initialLocation;
             }
         }
-        public static Int32 MapXSize
+        public Int32 MapXSize
         {
             get
             {
                 return mapXSize;
             }
         }
-        public static Int32 MapYSize
+        public Int32 MapYSize
         {
             get
             {
                 return mapYSize;
             }
         }
-        public static Node[,] NodeGrid
+        public Node[,] NodeGrid
         {
             get
             {
@@ -43,65 +72,74 @@ namespace testproject2
             }
         }
 
-        public static void LoadGame(String filePath)
+        // Prep
+        public void LoadGame(String filePath)
         {
             StreamReader input = new StreamReader(filePath);
             String line;
             String[] tokens;
-            while( (line = input.ReadLine()) != null )
+            try
             {
-                tokens = line.Split(' ');
-                switch (tokens[0])
+                while ((line = input.ReadLine()) != null)
                 {
-                    case "size":
-                        mapXSize = Int32.Parse(tokens[1]);
-                        mapYSize = Int32.Parse(tokens[2]);
-                        break;
-                    case "initiallocation":
-                        initialLocation.X = Int32.Parse(tokens[1]);
-                        initialLocation.Y = Int32.Parse(tokens[2]);
-                        nodeGrid = new Node[mapXSize, mapYSize];
-                        for (int i = 0; i < mapXSize; i++)
-                        {
-                            for (int j = 0; j < mapYSize; j++)
+                    tokens = line.Split(' ');
+                    switch (tokens[0])
+                    {
+                        case "size":
+                            mapXSize = Int32.Parse(tokens[1]);
+                            mapYSize = Int32.Parse(tokens[2]);
+                            break;
+                        case "initiallocation":
+                            initialLocation.X = Int32.Parse(tokens[1]);
+                            initialLocation.Y = Int32.Parse(tokens[2]);
+                            nodeGrid = new Node[mapXSize, mapYSize];
+                            for (int i = 0; i < mapXSize; i++)
                             {
-                                nodeGrid[i, j] = new Node(new Point(i, j), NodeType.SAND, initialLocation);
+                                for (int j = 0; j < mapYSize; j++)
+                                {
+                                    nodeGrid[i, j] = new Node(new Point(i, j), NodeType.SAND, initialLocation);
+                                }
                             }
-                        }
-                        nodeGrid[initialLocation.X, initialLocation.Y].UpdateNode(initialLocation, NodeType.PLAYER, initialLocation);
-                        break;
-                    case "diamonds":
-                        for (int i = 2; i < tokens.Length; i+= 2)
-                        {
-                            Point diamond = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
-                            diamonds.Add(diamond);
-                            nodeGrid[diamond.X, diamond.Y].UpdateNode(diamond, NodeType.DIAMOND, initialLocation);
-                            goals.Add(nodeGrid[diamond.X, diamond.Y]);
-                        }
-                        break;
-                    case "rocks":
-                        for (int i = 2; i < tokens.Length; i += 2)
-                        {
-                            Point rock = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
-                            rocks.Add(rock);
-                            nodeGrid[rock.X, rock.Y].UpdateNode(rock, NodeType.ROCK, initialLocation);
-                            if (rock.Y + 1 < mapYSize)
-                                nodeGrid[rock.X, rock.Y + 1].IsDangerous = true;
-                        }
-                        break;
-                    case "walls":
-                        for (int i = 2; i < tokens.Length; i += 2)
-                        {
-                            Point wall = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
-                            walls.Add(wall);
-                            nodeGrid[wall.X, wall.Y].UpdateNode(wall, NodeType.WALL, initialLocation);
-                        }
-                        break;
+                            nodeGrid[initialLocation.X, initialLocation.Y].UpdateNode(initialLocation, NodeType.PLAYER, initialLocation);
+                            break;
+                        case "diamonds":
+                            for (int i = 2; i < tokens.Length; i += 2)
+                            {
+                                Point diamond = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
+                                diamonds.Add(diamond);
+                                nodeGrid[diamond.X, diamond.Y].UpdateNode(diamond, NodeType.DIAMOND, initialLocation);
+                                goals.Add(nodeGrid[diamond.X, diamond.Y]);
+                            }
+                            break;
+                        case "rocks":
+                            for (int i = 2; i < tokens.Length; i += 2)
+                            {
+                                Point rock = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
+                                rocks.Add(rock);
+                                nodeGrid[rock.X, rock.Y].UpdateNode(rock, NodeType.ROCK, initialLocation);
+                                if (rock.Y + 1 < mapYSize)
+                                    nodeGrid[rock.X, rock.Y + 1].IsDangerous = true;
+                            }
+                            break;
+                        case "walls":
+                            for (int i = 2; i < tokens.Length; i += 2)
+                            {
+                                Point wall = new Point(Int32.Parse(tokens[i]), Int32.Parse(tokens[i + 1]));
+                                walls.Add(wall);
+                                nodeGrid[wall.X, wall.Y].UpdateNode(wall, NodeType.WALL, initialLocation);
+                            }
+                            break;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                throw(ex);
+            }            
         }
 
-        public static List<Node> SolveAStar()
+        // Algorithms
+        public List<Node> SolveAStar()
         {
             List<Node> Goals = goals, path = new List<Node>();
             Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
@@ -159,7 +197,7 @@ namespace testproject2
                         break;
                     }
 
-                    List<Node> neighbours = Game.GetNodeWalkableNeighbours(currentNode.Position);
+                    List<Node> neighbours = GetNodeWalkableNeighbours(currentNode.Position);
 
                     foreach (Node neighbour in neighbours)
                     {
@@ -196,9 +234,9 @@ namespace testproject2
             return path;
         }
 
-        public static List<Node> SolveIDDFS(Int32 maxDepth)
+        public List<List<Node>> SolveIDDFS(Int32 maxDepth)
         {
-            List<Node> path = new List<Node>();
+            List<List<Node>> path = new List<List<Node>>();
             for (int currentDepth = 0; currentDepth < maxDepth; currentDepth++)
             {
                 List<Node> currentDepthPath = new List<Node>();
@@ -241,14 +279,14 @@ namespace testproject2
                 currentDepthPath.Add(StartingNode);
 
                 // Last iteration
-                path = currentDepthPath;
+                //path = currentDepthPath;
                 // All iterations
-                // path.AddRange(currentDepthPath);
+                path.Add(currentDepthPath);
             }
             return path;
         }
 
-        public static List<Node> SolveCSP()
+        public List<Node> SolveCSP()
         {
             List<Node> path = new List<Node>();
 
@@ -281,7 +319,98 @@ namespace testproject2
             return path;
         }
 
-        private static List<Node> GetNodeWalkableNeighbours(Point nodePosition, Boolean removeVisitedNodes = false)
+        public List<List<Node>> SolveSA(Double temperature, Double decrement)
+        {
+            Random random = new Random(DateTime.Now.Second);
+            List<List<Node>> path = new List<List<Node>>();
+            for (Double currentTemperature = temperature; currentTemperature >= 0 ; currentTemperature-=decrement)
+            {
+                List<Node> TemperatureRunPath = new List<Node>();
+
+                List<Node> Goals = new List<Node>(goals);
+
+                Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
+
+                while (Goals.Count > 0)
+                {
+                    Node closestGoal = Goals[0];
+
+                    Int32 distanceToGoal = GetManhattanDistance(startingNode.Position, closestGoal.Position);
+
+                    for (int i = 1; i < Goals.Count; i++)
+                    {
+                        Int32 distanceToClosestGoalCandidate = GetManhattanDistance(startingNode.Position, Goals[i].Position);
+                        if (distanceToClosestGoalCandidate < distanceToGoal)
+                        {
+                            distanceToGoal = distanceToClosestGoalCandidate;
+                            closestGoal = Goals[i];
+                        }
+                    }
+
+                    Stack<Node> stack = new Stack<Node>();
+                    List<Node> visited = new List<Node>();
+
+                    Node currentNode = startingNode;
+
+                    currentNode.Visited = true;
+                    visited.Add(currentNode);
+
+                    stack.Push(currentNode);
+
+                    Boolean GoalReached = false;
+
+                    while (stack.Count > 0)
+                    {
+                        currentNode = stack.Peek();
+                        TemperatureRunPath.Add(currentNode);
+
+                        if (currentNode == closestGoal)
+                        {
+                            GoalReached = true;
+                            break;
+                        }
+
+                        if(Goals.Contains(currentNode))
+                        {
+                            Goals.Remove(currentNode);
+                        }
+
+                        List<Node> neighbours = GetNodeWalkableNeighbours(currentNode.Position, true);
+                        if (neighbours.Count > 0)
+                        {
+                            Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                            neighbour.SetHCost(closestGoal.Position);
+                            if (neighbour.hCost < currentNode.hCost || (neighbour.hCost > currentNode.hCost && random.NextDouble() < temperature))
+                            {
+                                neighbour.Visited = true;
+                                stack.Push(neighbour);
+                                TemperatureRunPath.Add(neighbour);
+                                visited.Add(neighbour);
+                            }
+                        }
+                        else
+                        {
+                            currentNode = stack.Pop();
+                        }
+                    }
+
+                    if (GoalReached)
+                    {
+                        startingNode = closestGoal;
+                        foreach (Node v in visited)
+                        {
+                            v.Visited = false;
+                        }
+                    }
+                    Goals.Remove(closestGoal);
+                }
+                path.Add(TemperatureRunPath);
+            }
+            return path;
+        }
+
+        // Helpers
+        private List<Node> GetNodeWalkableNeighbours(Point nodePosition, Boolean removeVisitedNodes = false)
         {
             List<Node> neighbours = new List<Node>();
             int neighbourX = 0, neighbourY = 0;
