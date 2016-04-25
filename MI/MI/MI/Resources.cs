@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,9 @@ namespace MI
         // Font Colors
         public static Color normalFontColor = Color.FromNonPremultiplied(239, 167, 20, 255), hoverFontColor = Color.FromNonPremultiplied(196, 18, 1, 255);
 
+        // Audio
+        public static SoundEffect pickupDiamond, tada, death;
+
         public static void LoadContent(ContentManager content)
         {
             mainMenuBackground = content.Load<Texture2D>("Images/MainMenuBackground");
@@ -34,6 +38,10 @@ namespace MI
             checkboxUncheckedBackground = content.Load<Texture2D>("Images/CheckBox_Unchecked");
             startOptionsButtonBackground = content.Load<Texture2D>("Images/StartOptionsButtonBackground");
             menuButtonsFont = content.Load<SpriteFont>("Fonts/MenuButtonsFont");
+
+            pickupDiamond = content.Load<SoundEffect>("Audio/Pickup_Coin4");
+            tada = content.Load<SoundEffect>("Audio/Tada");
+            death = content.Load<SoundEffect>("Audio/death2");
         }
     }
 }

@@ -44,6 +44,15 @@ namespace MI
         // Buttons Hover Booleans
         private static Boolean backHover = false;
 
+        // Manual Mode Stuff
+        private static KeyboardState oldKeyboardState;
+        private static KeyboardState newkeyboardState = Keyboard.GetState();
+        //private static SoundEffect pickupCoin;
+        //private static SoundEffect tada;
+        private static bool isMarioFlipped = false;
+
+
+
         // Prep
         private static void LoadMap()
         {
@@ -126,6 +135,8 @@ namespace MI
             switch (gameState)
             {
                 case GameState.MANUAL_MODE:
+                    if(!gameOver)
+                        ManualMode(gameTime);
                     break;
                 case GameState.ASTAR_MODE:
                     if (path == null)
@@ -217,6 +228,109 @@ namespace MI
             // BackButton
             spriteBatch.Draw(Resources.buttonBackground, backButtonPosition, Color.White);
             spriteBatch.DrawString(Resources.menuButtonsFont, "back", backButtonTextPosition, backHover ? Resources.hoverFontColor : Resources.normalFontColor);
+        }
+
+        public static void ManualMode(GameTime gameTime)
+        {
+            // Make Mario follow Keyboard
+            oldKeyboardState = newkeyboardState;
+            newkeyboardState = Keyboard.GetState();
+
+            // If the left key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Left) && oldKeyboardState.IsKeyUp(Keys.Left))
+            {
+                Point nextMove = new Point(currentPlayerPosition.X - 1, currentPlayerPosition.Y);
+                if (nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable)
+                {
+                    nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
+                    currentPlayerPosition = nextMove;
+                    if(nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y - 1].Type = NodeType.CLEAR;
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.ROCK;
+                        gameOver = true;
+                        Resources.death.Play();
+                    }
+                    else 
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.PLAYER; 
+                    }
+                }
+            }
+
+            // If the right key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right))
+            {
+                Point nextMove = new Point(currentPlayerPosition.X + 1, currentPlayerPosition.Y);
+                if (nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable )
+                {
+                    nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
+                    currentPlayerPosition = nextMove;
+                    if (nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y - 1].Type = NodeType.CLEAR;
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.ROCK;
+                        gameOver = true;
+                        Resources.death.Play();
+                    }
+                    else
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.PLAYER;
+                    }
+                }
+            }
+
+            // If the up key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Up) && oldKeyboardState.IsKeyUp(Keys.Up))
+            {
+                Point nextMove = new Point(currentPlayerPosition.X , currentPlayerPosition.Y - 1);
+                if (nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable)
+                {
+                    nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
+                    currentPlayerPosition = nextMove;
+                    if (nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y - 1].Type = NodeType.CLEAR;
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.ROCK;
+                        gameOver = true;
+                        Resources.death.Play();
+                    }
+                    else
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.PLAYER;
+                    }
+                }
+            }
+
+            // If the down key is pressed
+            if (newkeyboardState.IsKeyDown(Keys.Down) && oldKeyboardState.IsKeyUp(Keys.Down))
+            {
+                Point nextMove = new Point(currentPlayerPosition.X, currentPlayerPosition.Y + 1);
+                if (nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable)
+                {
+                    nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
+                    currentPlayerPosition = nextMove;
+                    if (nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y - 1].Type = NodeType.CLEAR;
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.ROCK;
+                        gameOver = true;
+                        Resources.death.Play();
+                    }
+                    else
+                    {
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.PLAYER;
+                    }
+                }
+            }
+            if (diamonds.Contains(new Point(currentPlayerPosition.X, currentPlayerPosition.Y)))
+            {
+                collectedDiamonds++;
+                Resources.pickupDiamond.Play();
+                diamonds.Remove(new Point(currentPlayerPosition.X, currentPlayerPosition.Y));
+                if (diamonds.Count == 0)
+                    gameOver = true;
+            }
         }
 
         private static void MovePlayerFromPath(GameTime gameTime)
