@@ -90,19 +90,19 @@ namespace MI
                     Scores.Update(gameTime, this);
                     break;
                 case GameState.MANUAL_MODE:
-                    GameMap.Update(gameTime, this);
+                    GameHandler.Update(gameTime, this, gameState);
                     break;
                 case GameState.ASTAR_MODE:
-                    GameMap.Update(gameTime, this);
+                    GameHandler.Update(gameTime, this, gameState);
                     break;
                 case GameState.IDDFS_MODE:
-                    GameMap.Update(gameTime, this);
+                    GameHandler.Update(gameTime, this, gameState);
                     break;
                 case GameState.CSP_MODE:
-                    GameMap.Update(gameTime, this);
+                    GameHandler.Update(gameTime, this, gameState);
                     break;
                 case GameState.SA_MODE:
-                    GameMap.Update(gameTime, this);
+                    GameHandler.Update(gameTime, this, gameState);
                     break;
             }
 
@@ -129,19 +129,19 @@ namespace MI
                     Scores.Draw(gameTime, spriteBatch);
                     break;
                 case GameState.MANUAL_MODE:
-                    GameMap.Draw(gameTime, spriteBatch);
+                    GameHandler.Draw(gameTime, spriteBatch, gameState);
                     break;
                 case GameState.ASTAR_MODE:
-                    GameMap.Draw(gameTime, spriteBatch);
+                    GameHandler.Draw(gameTime, spriteBatch, gameState);
                     break;
                 case GameState.IDDFS_MODE:
-                    GameMap.Draw(gameTime, spriteBatch);
+                    GameHandler.Draw(gameTime, spriteBatch, gameState);
                     break;
                 case GameState.CSP_MODE:
-                    GameMap.Draw(gameTime, spriteBatch);
+                    GameHandler.Draw(gameTime, spriteBatch, gameState);
                     break;
                 case GameState.SA_MODE:
-                    GameMap.Draw(gameTime, spriteBatch);
+                    GameHandler.Draw(gameTime, spriteBatch, gameState);
                     break;
             }
 

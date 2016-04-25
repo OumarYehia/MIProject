@@ -72,7 +72,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonResources.cs" />
+    <Compile Include="Node.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="Resources.cs" />
     <Compile Include="GameMap.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="MainMenu.cs" />
@@ -86,6 +88,7 @@
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
     <Compile Include="Game.ico" />
+    <None Include="Map.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MIContent\MIContent.contentproj">

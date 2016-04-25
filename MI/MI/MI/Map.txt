@@ -1,0 +1,5 @@
+size 5 10
+initiallocation 0 0
+diamonds 2 3 6 0 9
+rocks 1 2 5
+walls 3 2 4 3 4 3 5 1 5
