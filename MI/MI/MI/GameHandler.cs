@@ -57,7 +57,7 @@ namespace MI
             StreamReader input = new StreamReader(@"..\..\..\Map.txt");
             String line;
             String[] tokens;
-            Resources.background.Play();
+            Resources.backgroundMusicInstance.Play();
             try
             {
                 while ((line = input.ReadLine()) != null)
@@ -135,13 +135,7 @@ namespace MI
             {
                 case GameState.MANUAL_MODE:
                     if (!gameOver)
-                    {
                         ManualMode(gameTime);
-                    }
-                    else
-                    {
-                        Resources.background.Dispose();
-                    }
                     break;
                 case GameState.ASTAR_MODE:
                     if (path == null)
@@ -168,6 +162,9 @@ namespace MI
                         MovePlayerFrom2DPath(gameTime, true);
                     break;
             }
+
+            if (gameOver)
+                Resources.backgroundMusicInstance.Stop();
             
             MouseState mouseState = Mouse.GetState();
 
@@ -316,6 +313,7 @@ namespace MI
             else if (pathIndex == path.Count)
             {
                 gameOver = true;
+                Resources.tada.Play();
             }
         }
 
@@ -351,6 +349,7 @@ namespace MI
             else if (multiPathIndex == multiPath.Count)
             {
                 gameOver = true;
+                Resources.tada.Play();
             }
         }
 
