@@ -9,7 +9,7 @@ namespace MI
 {
     public class Node
     {
-        private static Texture2D[] NodeTiles = { Resources.playerTile, Resources.dirtTile, Resources.emptyTile, Resources.diamondTile, Resources.rockTile, Resources.wallTile };
+        private static Texture2D[] NodeTiles = { Resources.playerTile, Resources.dirtTile, Resources.emptyTile, Resources.diamondTile, Resources.rockTile, Resources.wallTile, Resources.deadTile };
         private static Boolean[] Walkability = { true, true, true, true, false, false };
 
         // Fields
@@ -82,6 +82,7 @@ namespace MI
         CLEAR,
         DIAMOND,
         ROCK,
-        WALL
+        WALL,
+        DEAD
     }
 }

@@ -92,21 +92,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\Diamond_Empty.png">
-      <Name>Diamond_Empty</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Images\Diamond_Filled.png">
-      <Name>Diamond_Filled</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Images\Diamond_Glowing.png">
-      <Name>Diamond_Glowing</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Images\Dirt.png">
       <Name>Dirt</Name>
       <Importer>TextureImporter</Importer>
@@ -147,18 +132,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fonts\Chiller Regular.spritefont">
-      <Name>Chiller Regular</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Audio\death.wav">
       <Name>death</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Audio\death2.wav">
       <Name>death2</Name>
       <Importer>WavImporter</Importer>
@@ -171,17 +151,26 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Audio\Tada.wav">
       <Name>Tada</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Audio\background.wav">
-      <Name>background</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
+    <ItemGroup>
+      <Compile Include="Audio\background.wav">
+        <Name>background</Name>
+        <Importer>WavImporter</Importer>
+        <Processor>SoundEffectProcessor</Processor>
+      </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Include="Images\Dead.png">
+      <Name>Dead</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

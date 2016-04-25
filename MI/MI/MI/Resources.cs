@@ -12,7 +12,7 @@ namespace MI
     public static class Resources
     {
         // Backgrounds: Menu Background, Button Background
-        public static Texture2D mainMenuBackground, scoresBackground, buttonBackground, startOptionsButtonBackground, checkboxCheckedBackground, checkboxUncheckedBackground, gameMapBackground, dirtTile, playerTile, emptyTile, diamondTile, rockTile, wallTile;
+        public static Texture2D mainMenuBackground, scoresBackground, buttonBackground, startOptionsButtonBackground, checkboxCheckedBackground, checkboxUncheckedBackground, gameMapBackground, dirtTile, playerTile, emptyTile, diamondTile, rockTile, wallTile, deadTile;
         
         // Font
         public static SpriteFont menuButtonsFont;
@@ -35,6 +35,7 @@ namespace MI
             emptyTile = content.Load<Texture2D>("Images/Empty");
             rockTile = content.Load<Texture2D>("Images/Rock");
             wallTile = content.Load<Texture2D>("Images/Wall");
+            deadTile = content.Load<Texture2D>("Images/Dead");
             checkboxCheckedBackground = content.Load<Texture2D>("Images/CheckBox_Checked");
             checkboxUncheckedBackground = content.Load<Texture2D>("Images/CheckBox_Unchecked");
             startOptionsButtonBackground = content.Load<Texture2D>("Images/StartOptionsButtonBackground");
