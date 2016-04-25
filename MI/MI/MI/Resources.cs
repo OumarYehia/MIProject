@@ -26,7 +26,7 @@ namespace MI
             buttonBackground = content.Load<Texture2D>("Images/ButtonBackground");
             dirtTile = content.Load<Texture2D>("Images/Dirt");
             playerTile = content.Load<Texture2D>("Images/Player");
-            diamondTile = content.Load<Texture2D>("Images/Diamond_Glowing");
+            diamondTile = content.Load<Texture2D>("Images/Diamond");
             emptyTile = content.Load<Texture2D>("Images/Empty");
             rockTile = content.Load<Texture2D>("Images/Rock");
             wallTile = content.Load<Texture2D>("Images/Wall");

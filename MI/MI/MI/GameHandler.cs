@@ -27,6 +27,7 @@ namespace MI
         private static Int32 maxDepth = 10;
         private static Int32 collectedDiamonds = 0;
         private static Boolean gameOver = false;
+        private static Int32 diamondFrameCounter = 0, currentDiamondFrame = 0;
 
         private static List<Node> path = null;
         private static List<List<Node>> multiPath= null;
@@ -176,7 +177,21 @@ namespace MI
 
             foreach (Node n in nodeGrid)
             {
-                spriteBatch.Draw(n.NodeTile, n.Rectangle, Color.White);
+                if(n.Type == NodeType.DIAMOND)
+                {
+                    diamondFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    if(diamondFrameCounter > 350)
+                    {
+                        currentDiamondFrame += 140;
+                        diamondFrameCounter = 0;
+                        if (currentDiamondFrame == 280)
+                            currentDiamondFrame = 0;
+                    }
+                    Rectangle diamondRectangle = new Rectangle(currentDiamondFrame, 0, 140, 140);
+                    spriteBatch.Draw(n.NodeTile, n.Rectangle, diamondRectangle, Color.White);
+                }
+                else
+                    spriteBatch.Draw(n.NodeTile, n.Rectangle, Color.White);
             }
 
             if(gameOver)
@@ -224,7 +239,6 @@ namespace MI
                 gameOver = true;
             }
         }
-
 
         private static void MovePlayerFrom2DPath(GameTime gameTime, Boolean reset = false)
         {   
@@ -274,6 +288,7 @@ namespace MI
             multiPathIndex = 0;
             startingTemperature = 1;
             collectedDiamonds = 0;
+            diamondFrameCounter = 0;
             path = null;
             multiPath= null;
             prevGameTime = null;
