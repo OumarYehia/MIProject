@@ -196,13 +196,16 @@ namespace MI
                 switch (n.Type)
                 {
                     case NodeType.PLAYER:
-                        playerFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
-                        if (playerFrameCounter > 100)
+                        if(!gameOver)
                         {
-                            currentPlayerFrame += 140;
-                            playerFrameCounter = 0;
-                            if (currentPlayerFrame == 840)
-                                currentPlayerFrame = 0;
+                            playerFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
+                            if (playerFrameCounter > 100)
+                            {
+                                currentPlayerFrame += 140;
+                                playerFrameCounter = 0;
+                                if (currentPlayerFrame == 840)
+                                    currentPlayerFrame = 0;
+                            }
                         }
                         Rectangle playerRectangle = new Rectangle(currentPlayerFrame, 0, 140, 180);
                         spriteBatch.Draw(n.NodeTile, n.Rectangle, playerRectangle, Color.White);
