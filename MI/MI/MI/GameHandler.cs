@@ -49,6 +49,7 @@ namespace MI
         private static KeyboardState oldKeyboardState;
         private static KeyboardState newkeyboardState = Keyboard.GetState();
 
+        // Played Flipped Flag
         private static bool isPlayerFlipped = false;
 
         // Prep
@@ -176,6 +177,7 @@ namespace MI
                 if (mouseState.LeftButton == ButtonState.Released && prevMouseState.LeftButton == ButtonState.Pressed)
                 {
                     game.gameState = GameState.MAIN_MENU;
+                    Resources.backgroundMusicInstance.Stop();
                     Reset();
                 }
             }
@@ -205,7 +207,10 @@ namespace MI
                             }
                         }
                         Rectangle playerRectangle = new Rectangle(currentPlayerFrame, 0, 140, 180);
-                        spriteBatch.Draw(n.NodeTile, n.Rectangle, playerRectangle, Color.White);
+                        if(isPlayerFlipped)
+                            spriteBatch.Draw(Flip(n.NodeTile), n.Rectangle, playerRectangle, Color.White);
+                        else
+                            spriteBatch.Draw(n.NodeTile, n.Rectangle, playerRectangle, Color.White);
                         break;
                     case NodeType.DIAMOND:
                         diamondFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -269,6 +274,12 @@ namespace MI
 
             if (nextMove != null && nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable)
             {
+
+                if (currentPlayerPosition.X + 1 == nextMove.X) // Right
+                    isPlayerFlipped = true;
+                else if (currentPlayerPosition.X - 1 == nextMove.X) // Left
+                    isPlayerFlipped = false;
+
                 nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
                 currentPlayerPosition = nextMove;
                 if (nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
@@ -302,7 +313,13 @@ namespace MI
                 nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
                 Node nextMove = path[pathIndex++];
                 nodeGrid[nextMove.Position.X, nextMove.Position.Y].Type = NodeType.PLAYER;
-                currentPlayerPosition = nextMove.Position;
+
+                if (currentPlayerPosition.X + 1 == nextMove.Position.X) // Right
+                    isPlayerFlipped = true;
+                else if (currentPlayerPosition.X - 1 == nextMove.Position.X) // Left
+                    isPlayerFlipped = false;
+
+                    currentPlayerPosition = nextMove.Position;
                 if(diamonds.Contains(new Point(currentPlayerPosition.X,currentPlayerPosition.Y)))
                 {
                     collectedDiamonds++;
@@ -326,6 +343,12 @@ namespace MI
                     nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
                     Node nextMove = multiPath[multiPathIndex][pathIndex++];
                     nodeGrid[nextMove.Position.X, nextMove.Position.Y].Type = NodeType.PLAYER;
+
+                    if (currentPlayerPosition.X + 1 == nextMove.Position.X) // Right
+                        isPlayerFlipped = true;
+                    else if (currentPlayerPosition.X - 1 == nextMove.Position.X) // Left
+                        isPlayerFlipped = false;
+
                     currentPlayerPosition = nextMove.Position;
                     if (diamonds.Contains(new Point(currentPlayerPosition.X, currentPlayerPosition.Y)))
                     {
@@ -357,6 +380,7 @@ namespace MI
         {
             backHover = false;
             gameOver = false;
+            isPlayerFlipped = false;
             diamonds = new List<Point>() { };
             rocks = new List<Point>() { };
             walls = new List<Point>() { };
@@ -686,6 +710,27 @@ namespace MI
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
         }
+
+        public static Texture2D Flip(Texture2D source)
+        {
+            bool horizontal = true, vertical = false;
+            Texture2D flipped = new Texture2D(source.GraphicsDevice, source.Width, source.Height);
+            Color[] data = new Color[source.Width * source.Height];
+            Color[] flippedData = new Color[data.Length];
+
+            source.GetData<Color>(data);
+
+            for (int x = 0; x < source.Width; x++)
+                for (int y = 0; y < source.Height; y++)
+                {
+                    int idx = (horizontal ? source.Width - 1 - x : x) + ((vertical ? source.Height - 1 - y : y) * source.Width);
+                    flippedData[x + y * source.Width] = data[idx];
+                }
+
+            flipped.SetData<Color>(flippedData);
+
+            return flipped;
+        }  
 
     }
 }
