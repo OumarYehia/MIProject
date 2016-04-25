@@ -132,13 +132,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fonts\Chiller Regular.spritefont">
-      <Name>Chiller Regular</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Audio\death.wav">
       <Name>death</Name>
       <Importer>WavImporter</Importer>
