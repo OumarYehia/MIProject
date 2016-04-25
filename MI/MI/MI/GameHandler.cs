@@ -47,11 +47,8 @@ namespace MI
         // Manual Mode Stuff
         private static KeyboardState oldKeyboardState;
         private static KeyboardState newkeyboardState = Keyboard.GetState();
-        //private static SoundEffect pickupCoin;
-        //private static SoundEffect tada;
-        private static bool isMarioFlipped = false;
 
-
+        private static bool isPlayerFlipped = false;
 
         // Prep
         private static void LoadMap()
@@ -230,7 +227,7 @@ namespace MI
             spriteBatch.DrawString(Resources.menuButtonsFont, "back", backButtonTextPosition, backHover ? Resources.hoverFontColor : Resources.normalFontColor);
         }
 
-        public static void ManualMode(GameTime gameTime)
+        private static void ManualMode(GameTime gameTime)
         {
             // Make Mario follow Keyboard
             oldKeyboardState = newkeyboardState;
