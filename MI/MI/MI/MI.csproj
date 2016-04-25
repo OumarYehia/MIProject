@@ -88,7 +88,9 @@
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
     <Compile Include="Game.ico" />
-    <None Include="Map.txt" />
+    <None Include="Map.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MIContent\MIContent.contentproj">
