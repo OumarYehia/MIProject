@@ -20,7 +20,8 @@ namespace MI
         public static Color normalFontColor = Color.FromNonPremultiplied(239, 167, 20, 255), hoverFontColor = Color.FromNonPremultiplied(196, 18, 1, 255);
 
         // Audio
-        public static SoundEffect pickupDiamond, tada, death;
+        public static SoundEffect pickupDiamond, tada, death, background;
+        public static SoundEffectInstance backgroundInstance;
 
         public static void LoadContent(ContentManager content)
         {
@@ -42,6 +43,8 @@ namespace MI
             pickupDiamond = content.Load<SoundEffect>("Audio/Pickup_Coin4");
             tada = content.Load<SoundEffect>("Audio/Tada");
             death = content.Load<SoundEffect>("Audio/death2");
+            background = content.Load<SoundEffect>("Audio/background");
+            backgroundInstance = background.CreateInstance();
         }
     }
 }

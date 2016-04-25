@@ -59,6 +59,7 @@ namespace MI
             StreamReader input = new StreamReader(@"..\..\..\Map.txt");
             String line;
             String[] tokens;
+            Resources.background.Play();
             try
             {
                 while ((line = input.ReadLine()) != null)
@@ -135,8 +136,14 @@ namespace MI
             switch (gameState)
             {
                 case GameState.MANUAL_MODE:
-                    if(!gameOver)
+                    if (!gameOver)
+                    {
                         ManualMode(gameTime);
+                    }
+                    else
+                    {
+                        Resources.background.Dispose();
+                    }
                     break;
                 case GameState.ASTAR_MODE:
                     if (path == null)
@@ -329,7 +336,10 @@ namespace MI
                 Resources.pickupDiamond.Play();
                 diamonds.Remove(new Point(currentPlayerPosition.X, currentPlayerPosition.Y));
                 if (diamonds.Count == 0)
+                {
                     gameOver = true;
+                    Resources.tada.Play();
+                }
             }
         }
 
