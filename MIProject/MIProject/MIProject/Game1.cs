@@ -31,7 +31,12 @@ namespace MIProject
         List<Rectangle> stones = new List<Rectangle>();
         List<Rectangle> concretes = new List<Rectangle>();
         KeyboardState oldKeyboardState;
+        SpriteFont chillerRegular;
+        Vector2 FontPos;
+        SoundEffect pickupCoin;
+        SoundEffect tada;
         bool isMarioFlipped = false;
+        int score = 0;
         
 
         // Variables
@@ -104,6 +109,14 @@ namespace MIProject
 
             // TODO: use this.Content to load your game content here
             
+            // Load SpriteFont
+            chillerRegular = Content.Load<SpriteFont>("Chiller Regular");
+            FontPos = new Vector2(graphics.GraphicsDevice.Viewport.Width - 50 , 50);
+
+            // Loading sound
+            pickupCoin = Content.Load<SoundEffect>("Pickup_Coin4");
+            tada = Content.Load<SoundEffect>("Tada");
+
             // Load sand and draw the rectangles
             sand = Content.Load<Texture2D>("sand2");
             diamond = Content.Load<Texture2D>("diamond");
@@ -151,6 +164,46 @@ namespace MIProject
             // TODO: Unload any non ContentManager content here
         }
 
+
+        protected void checkCollision()
+        {
+            for (int i = 0; i < diamonds.Count; i++)
+            {
+                if (rectanglePlayer.Intersects(diamonds.ElementAt(i)))
+                {
+                    score++;
+                    pickupCoin.Play();
+                    diamonds.Remove(diamonds.ElementAt(i));
+
+                    if (score == diamondsCount)
+                        tada.Play();
+                }
+            }
+            for (int i = 0; i < stones.Count; i++)
+            {
+                if (rectanglePlayer.Intersects(stones.ElementAt(i)) && !isMarioFlipped)
+                {
+                    rectanglePlayer.X = stones.ElementAt(i).Left - rectanglePlayer.Width;
+                }
+                else if (rectanglePlayer.Intersects(stones.ElementAt(i)) && isMarioFlipped)
+                {
+                    rectanglePlayer.X = stones.ElementAt(i).Right;
+                }
+            }
+            for (int i = 0; i < concretes.Count; i++)
+            {
+                if (rectanglePlayer.Intersects(concretes.ElementAt(i)) && !isMarioFlipped)
+                {
+                    rectanglePlayer.X = concretes.ElementAt(i).Left - rectanglePlayer.Width;
+                }
+                else if (rectanglePlayer.Intersects(concretes.ElementAt(i)) && isMarioFlipped)
+                {
+                    rectanglePlayer.X = concretes.ElementAt(i).Right;
+                }
+            }
+
+
+        }
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -175,7 +228,7 @@ namespace MIProject
             if (rectanglePlayer.Right > WINDOW_WIDTH) rectanglePlayer.X = WINDOW_WIDTH - rectanglePlayer.Width;
             if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
             if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;*/
-
+            checkCollision();
             base.Update(gameTime);
         }
 
@@ -301,7 +354,14 @@ namespace MIProject
                 spriteBatch.Draw(concrete, concretes[i], Color.White);
             }
                 spriteBatch.Draw(player, rectanglePlayer, Color.Wheat);
-            
+
+
+                Vector2 FontOrigin = chillerRegular.MeasureString(score.ToString()) / 2;
+                // Draw the string
+                spriteBatch.DrawString(chillerRegular, score.ToString(), FontPos, Color.Red,
+                    0, FontOrigin, 1.0f, SpriteEffects.None, 0.5f);
+
+
             spriteBatch.End();
 
 
