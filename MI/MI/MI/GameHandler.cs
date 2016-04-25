@@ -28,6 +28,7 @@ namespace MI
         private static Int32 collectedDiamonds = 0;
         private static Boolean gameOver = false;
         private static Int32 diamondFrameCounter = 0, currentDiamondFrame = 0;
+        private static Int32 playerFrameCounter = 0, currentPlayerFrame = 0;
 
         private static List<Node> path = null;
         private static List<List<Node>> multiPath= null;
@@ -124,7 +125,7 @@ namespace MI
         public static void Update(GameTime gameTime, Game1 game, GameState gameState)
         {
             if (prevGameTime == null)
-                prevGameTime = new GameTime(gameTime.TotalGameTime,gameTime.ElapsedGameTime);
+                prevGameTime = new GameTime(gameTime.TotalGameTime, gameTime.ElapsedGameTime);
 
             if (nodeGrid.Length == 0)
                 LoadMap();
@@ -185,21 +186,36 @@ namespace MI
 
             foreach (Node n in nodeGrid)
             {
-                if(n.Type == NodeType.DIAMOND)
+                switch (n.Type)
                 {
-                    diamondFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if(diamondFrameCounter > 350)
-                    {
-                        currentDiamondFrame += 140;
-                        diamondFrameCounter = 0;
-                        if (currentDiamondFrame == 280)
-                            currentDiamondFrame = 0;
-                    }
-                    Rectangle diamondRectangle = new Rectangle(currentDiamondFrame, 0, 140, 140);
-                    spriteBatch.Draw(n.NodeTile, n.Rectangle, diamondRectangle, Color.White);
+                    case NodeType.PLAYER:
+                        playerFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if (playerFrameCounter > 100)
+                        {
+                            currentPlayerFrame += 140;
+                            playerFrameCounter = 0;
+                            if (currentPlayerFrame == 840)
+                                currentPlayerFrame = 0;
+                        }
+                        Rectangle playerRectangle = new Rectangle(currentPlayerFrame, 0, 140, 180);
+                        spriteBatch.Draw(n.NodeTile, n.Rectangle, playerRectangle, Color.White);
+                        break;
+                    case NodeType.DIAMOND:
+                        diamondFrameCounter += (Int32)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        if(diamondFrameCounter > 350)
+                        {
+                            currentDiamondFrame += 140;
+                            diamondFrameCounter = 0;
+                            if (currentDiamondFrame == 280)
+                                currentDiamondFrame = 0;
+                        }
+                        Rectangle diamondRectangle = new Rectangle(currentDiamondFrame, 0, 140, 140);
+                        spriteBatch.Draw(n.NodeTile, n.Rectangle, diamondRectangle, Color.White);
+                        break;
+                    default:
+                        spriteBatch.Draw(n.NodeTile, n.Rectangle, Color.White);
+                        break;
                 }
-                else
-                    spriteBatch.Draw(n.NodeTile, n.Rectangle, Color.White);
             }
 
             if(gameOver)
@@ -244,7 +260,7 @@ namespace MI
                     if(nodeGrid[nextMove.X, nextMove.Y].IsDangerous)
                     {
                         nodeGrid[nextMove.X, nextMove.Y - 1].Type = NodeType.CLEAR;
-                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.ROCK;
+                        nodeGrid[nextMove.X, nextMove.Y].Type = NodeType.DEAD;
                         gameOver = true;
                         Resources.death.Play();
                     }
