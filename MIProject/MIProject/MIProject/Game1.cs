@@ -31,11 +31,13 @@ namespace MIProject
         List<Rectangle> stones = new List<Rectangle>();
         List<Rectangle> concretes = new List<Rectangle>();
         KeyboardState oldKeyboardState;
+        KeyboardState newkeyboardState = Keyboard.GetState();
         SpriteFont chillerRegular;
         Vector2 FontPos;
         SoundEffect pickupCoin;
         SoundEffect tada;
         bool isMarioFlipped = false;
+        bool solveastar;
         int score = 0;
         
 
@@ -54,9 +56,6 @@ namespace MIProject
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
-
-
 
 
             //Initializing Variables();
@@ -118,8 +117,8 @@ namespace MIProject
             tada = Content.Load<SoundEffect>("Tada");
 
             // Load sand and draw the rectangles
-            sand = Content.Load<Texture2D>("sand2");
-            diamond = Content.Load<Texture2D>("diamond");
+            sand = Content.Load<Texture2D>("dirt");
+            diamond = Content.Load<Texture2D>("Diamond_Glowing");
             stone = Content.Load<Texture2D>("stone");
             player = Content.Load<Texture2D>("Mario1");
             concrete = Content.Load<Texture2D>("metalwall");
@@ -179,6 +178,14 @@ namespace MIProject
                         tada.Play();
                 }
             }
+            for (int i = 0; i < rectangles.Count; i++)
+            {
+                if (rectanglePlayer.Intersects(rectangles.ElementAt(i)))
+                {
+                    rectangles.Remove(rectangles.ElementAt(i));
+
+                }
+            }
             for (int i = 0; i < stones.Count; i++)
             {
                 if (rectanglePlayer.Intersects(stones.ElementAt(i)) && !isMarioFlipped)
@@ -229,7 +236,16 @@ namespace MIProject
             if (rectanglePlayer.Top < 0) rectanglePlayer.Y = 0;
             if (rectanglePlayer.Bottom > WINDOW_HEIGHT) rectanglePlayer.Y = WINDOW_HEIGHT - rectanglePlayer.Height;*/
             checkCollision();
+
+            if (solveastar)
+                SolveAStar();
+
             base.Update(gameTime);
+        }
+
+        protected void SolveAStar()
+        {
+
         }
 
 
@@ -259,60 +275,35 @@ namespace MIProject
         private void UpdateMarioKeyboard()
         {
             // Make Mario follow Keyboard
-            KeyboardState newkeyboardState = Keyboard.GetState();
+            oldKeyboardState = newkeyboardState;
+            newkeyboardState = Keyboard.GetState();
 
             // If the left key is pressed
-            if (newkeyboardState.IsKeyDown(Keys.Left))
+            if (newkeyboardState.IsKeyDown(Keys.Left) && oldKeyboardState.IsKeyUp(Keys.Left) )
             {
-                // If it was just pressed
-                if (!oldKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    rectanglePlayer.X -= 10;                
-                }
-                else
-                {
-                    rectanglePlayer.X -= 5;
-                }
-
+                rectanglePlayer.X -= 100;
                 if (!isMarioFlipped)
                 {
                     player = Flip(player, false, true);
                     isMarioFlipped = true;
                 }
             }
-            // If the right key is pressed
-            if (newkeyboardState.IsKeyDown(Keys.Right))
+            if (newkeyboardState.IsKeyDown(Keys.Right) && oldKeyboardState.IsKeyUp(Keys.Right))
             {
-                // If it was just pressed
-                if (!oldKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    rectanglePlayer.X += 10;
-                }
-                else
-                    rectanglePlayer.X += 5;
+                rectanglePlayer.X += 100;
                 if (isMarioFlipped)
                 {
                     player = Flip(player, false, true);
                     isMarioFlipped = false;
                 }
             }
-            // If the up key is pressed
-            if (newkeyboardState.IsKeyDown(Keys.Up))
+            if (newkeyboardState.IsKeyDown(Keys.Up) && oldKeyboardState.IsKeyUp(Keys.Up))
             {
-                // If it was just pressed
-                if (!oldKeyboardState.IsKeyDown(Keys.Up))
-                    rectanglePlayer.Y -= 10;
-                else
-                    rectanglePlayer.Y -= 5;
+                rectanglePlayer.Y -= 100;
             }
-            // If the down key is pressed
-            if (newkeyboardState.IsKeyDown(Keys.Down))
+            if (newkeyboardState.IsKeyDown(Keys.Down) && oldKeyboardState.IsKeyUp(Keys.Down))
             {
-                // If it was just pressed
-                if (!oldKeyboardState.IsKeyDown(Keys.Down))
-                    rectanglePlayer.Y += 10;
-                else
-                    rectanglePlayer.Y += 5;
+                rectanglePlayer.Y += 100;
             }
 
             // Limit movement of mario to within window
