@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace MI
 {
@@ -22,6 +23,9 @@ namespace MI
         // Audio
         public static SoundEffect pickupDiamond, tada, death, backgroundMusic;
         public static SoundEffectInstance backgroundMusicInstance;
+
+        // MapFile
+        public static String mapFilePath;
 
         public static void LoadContent(ContentManager content)
         {
@@ -46,6 +50,8 @@ namespace MI
             death = content.Load<SoundEffect>("Audio/death2");
             backgroundMusic = content.Load<SoundEffect>("Audio/background");
             backgroundMusicInstance = backgroundMusic.CreateInstance();
+
+            mapFilePath = content.RootDirectory + "\\Map.txt";
         }
     }
 }

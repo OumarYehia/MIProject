@@ -55,7 +55,7 @@ namespace MI
         // Prep
         private static void LoadMap()
         {
-            StreamReader input = new StreamReader(@"..\..\..\Map.txt");
+            StreamReader input = new StreamReader(Resources.mapFilePath);
             String line;
             String[] tokens;
             Resources.backgroundMusicInstance.Play();
