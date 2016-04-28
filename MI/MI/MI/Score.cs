@@ -41,9 +41,9 @@ namespace MI
             if (otherScore == null) throw new NullReferenceException();
 
             if (this.NumberOfDiamonds == otherScore.NumberOfDiamonds)
-                return -1 * this.TimeElapsed.CompareTo(otherScore.TimeElapsed);
+                return this.TimeElapsed.CompareTo(otherScore.TimeElapsed);
             else
-                return this.NumberOfDiamonds.CompareTo(otherScore.NumberOfDiamonds);
+                return -1 * this.NumberOfDiamonds.CompareTo(otherScore.NumberOfDiamonds);
         }
 
         public static IComparer<Score> ComparerOnAndNumberOfDiamondsAndNodes()
