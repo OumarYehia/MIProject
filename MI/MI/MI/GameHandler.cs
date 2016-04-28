@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
+using System.Diagnostics;
 
 namespace MI
 {
@@ -23,8 +24,8 @@ namespace MI
         private static Int32 mapXMaxPosition = 560, mapYMaxPosition = 580;
         private static Point currentPlayerPosition= new Point(0,0);
         private static Int32 pathIndex = 0, multiPathIndex = 0;
-        private static Double startingTemperature = 1, temperatureDecrement = 0.01;
-        private static Int32 maxDepth = 10;
+        private static Decimal startingTemperature = 0.3M, temperatureDecrement = 0.1M;
+        private static Int32 maxDepth = 20;
         private static Int32 collectedDiamonds = 0;
         private static Boolean gameOver = false;
         private static Int32 diamondFrameCounter = 0, currentDiamondFrame = 0;
@@ -51,6 +52,15 @@ namespace MI
 
         // Played Flipped Flag
         private static bool isPlayerFlipped = false;
+
+        // Scores
+        public static SortedSet<Score> Scores = new SortedSet<Score>(), ComputerScores = new SortedSet<Score>(), HumanScores = new SortedSet<Score>(), SAScores = new SortedSet<Score>();
+
+        // Human Time Elapsed Counter
+        private static Stopwatch humanStopWatch = new Stopwatch();
+
+        // Human Score Nodes Counter
+        private static Int64 humanPathNumberOfNodes = 0;
 
         // Prep
         private static void LoadMap()
@@ -114,6 +124,15 @@ namespace MI
                                 nodeGrid[wall.X, wall.Y].UpdateNode(wall, NodeType.WALL, initialLocation);
                             }
                             break;
+                        case "iddfsmaxdepth":
+                            maxDepth = Int32.Parse(tokens[1]);
+                            break;
+                        case "sastartingtemperature":
+                            startingTemperature = Decimal.Parse(tokens[1]);
+                            break;
+                        case "satemperaturedecrement":
+                            temperatureDecrement = Decimal.Parse(tokens[1]);
+                            break;
                     }
                 }
 
@@ -136,29 +155,62 @@ namespace MI
             {
                 case GameState.MANUAL_MODE:
                     if (!gameOver)
+                    {
+                        if (!humanStopWatch.IsRunning)
+                        humanStopWatch.Start();
                         ManualMode(gameTime);
+                    }
+                    else if (gameOver && humanStopWatch.IsRunning)
+                    {
+                        humanStopWatch.Stop();
+                        Score humanScore = new Score("Human", humanPathNumberOfNodes, collectedDiamonds, collectedDiamonds == goals.Count, humanStopWatch.Elapsed);
+                        Scores.Add(humanScore);
+                        HumanScores.Add(humanScore);
+                        humanStopWatch.Reset();
+                    }
                     break;
                 case GameState.ASTAR_MODE:
                     if (path == null)
-                        path = SolveAStar();
+                    {
+                        Score score;
+                        path = SolveAStar(out score);
+                        ComputerScores.Add(score);
+                        Scores.Add(score);
+                    }
                     if(!gameOver)
                         MovePlayerFromPath(gameTime);
                     break;
                 case GameState.IDDFS_MODE:
                     if (multiPath == null)
-                        multiPath = SolveIDDFS(maxDepth);
+                    {
+                        Score score;
+                        multiPath = SolveIDDFS(out score);
+                        ComputerScores.Add(score);
+                        Scores.Add(score);
+                    }
                     if (!gameOver)
                         MovePlayerFrom2DPath(gameTime);
                     break;
                 case GameState.CSP_MODE:
                     if (path == null)
-                        path = SolveCSP();
+                    {
+                        Score score;
+                        path = SolveCSP(out score);
+                        ComputerScores.Add(score);
+                        Scores.Add(score);
+                    }
                     if (!gameOver)
                         MovePlayerFromPath(gameTime);
                     break;
                 case GameState.SA_MODE:
                     if (multiPath == null)
-                        multiPath = SolveSA(startingTemperature, temperatureDecrement);
+                    {
+                        Score score;
+                        multiPath = SolveSA(out score);
+                        ComputerScores.Add(score);
+                        Scores.Add(score);
+                        SAScores.Add(score);
+                    }
                     if (!gameOver)
                         MovePlayerFrom2DPath(gameTime, true);
                     break;
@@ -178,6 +230,14 @@ namespace MI
                 {
                     game.gameState = GameState.MAIN_MENU;
                     Resources.backgroundMusicInstance.Stop();
+                    if (humanStopWatch.IsRunning)
+                    {
+                        humanStopWatch.Stop();
+                        Score humanScore = new Score("Human", humanPathNumberOfNodes, collectedDiamonds, collectedDiamonds == goals.Count, humanStopWatch.Elapsed);
+                        Scores.Add(humanScore);
+                        HumanScores.Add(humanScore);
+                        humanStopWatch.Reset();
+                    }
                     Reset();
                 }
             }
@@ -274,6 +334,7 @@ namespace MI
 
             if (nextMove != null && nextMove.X > -1 && nextMove.X < mapXSize && nextMove.Y > -1 && nextMove.Y < mapYSize && nodeGrid[nextMove.X, nextMove.Y].IsWalkable)
             {
+                humanPathNumberOfNodes++;
 
                 if (currentPlayerPosition.X + 1 == nextMove.X) // Right
                     isPlayerFlipped = true;
@@ -308,7 +369,7 @@ namespace MI
 
         private static void MovePlayerFromPath(GameTime gameTime)
         {
-            if (pathIndex < path.Count && gameTime.TotalGameTime.TotalSeconds - prevGameTime.TotalGameTime.TotalSeconds > 0.1)
+            if (pathIndex < path.Count && gameTime.TotalGameTime.TotalSeconds - prevGameTime.TotalGameTime.TotalSeconds > 0.05)
             {
                 nodeGrid[currentPlayerPosition.X, currentPlayerPosition.Y].Type = NodeType.CLEAR;
                 Node nextMove = path[pathIndex++];
@@ -336,7 +397,7 @@ namespace MI
 
         private static void MovePlayerFrom2DPath(GameTime gameTime, Boolean reset = false)
         {   
-            if (multiPathIndex < multiPath.Count && gameTime.TotalGameTime.TotalSeconds - prevGameTime.TotalGameTime.TotalSeconds > 0.1)
+            if (multiPathIndex < multiPath.Count && gameTime.TotalGameTime.TotalSeconds - prevGameTime.TotalGameTime.TotalSeconds > 0.02)
             {
                 if (pathIndex < multiPath[multiPathIndex].Count)
                 {
@@ -388,9 +449,9 @@ namespace MI
             nodeGrid = new Node[0,0]{};
             pathIndex = 0;
             multiPathIndex = 0;
-            startingTemperature = 1;
             collectedDiamonds = 0;
             diamondFrameCounter = 0;
+            humanPathNumberOfNodes = 0;
             path = null;
             multiPath= null;
             prevGameTime = null;
@@ -399,8 +460,12 @@ namespace MI
 
         // Game Solver
         // Algorithms
-        public static List<Node> SolveAStar()
+        public static List<Node> SolveAStar(out Score score)
         {
+            Stopwatch sw = Stopwatch.StartNew();
+            Int64 numberOfNodes = -1;
+            Int32 numberOfDiamonds = 0;
+
             List<Node> Goals = goals, path = new List<Node>();
             Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
 
@@ -430,6 +495,8 @@ namespace MI
 
                 while (openSet.Count > 0)
                 {
+                    numberOfNodes = Math.Max(numberOfNodes, openSet.Count);
+
                     currentNode = openSet[0];
 
                     for (int i = 1; i < openSet.Count; i++)
@@ -480,6 +547,7 @@ namespace MI
 
                 if (GoalReached)
                 {
+                    numberOfDiamonds++;
                     startingNode = closestGoal;
                     for (int i = 0; i < mapXSize; i++)
                     {
@@ -491,14 +559,26 @@ namespace MI
                 }
                 Goals.Remove(closestGoal);
             }
+            
+            sw.Stop();
+
+            score = new Score("A star", numberOfNodes, numberOfDiamonds, numberOfDiamonds == goals.Count, sw.Elapsed);
+
             return path;
         }
 
-        public static List<List<Node>> SolveIDDFS(Int32 maxDepth)
+        public static List<List<Node>> SolveIDDFS(out Score score)
         {
+            Stopwatch sw = Stopwatch.StartNew();
+            Int64 numberOfNodes = -1;
+            Int32 numberOfDiamonds = 0;
+            Boolean collectedAllDiamonds = false;
+
             List<List<Node>> path = new List<List<Node>>();
-            for (int currentDepth = 0; currentDepth < maxDepth; currentDepth++)
+            for (int currentDepth = 0; currentDepth < maxDepth && !collectedAllDiamonds; currentDepth++)
             {
+                List<Node> Goals = goals;
+
                 List<Node> currentDepthPath = new List<Node>();
 
                 List<Node> visited = new List<Node>();
@@ -515,6 +595,14 @@ namespace MI
                 {
                     CurrentNode = stack.Pop();
                     currentDepthPath.Add(CurrentNode);
+
+                    if (Goals.Contains(CurrentNode))
+                    {
+                        Goals.Remove(CurrentNode);
+                        numberOfDiamonds++;
+                        if (Goals.Count == 0)
+                            break;
+                    }
 
                     List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position, true);
                     foreach (Node neighbour in neighbours)
@@ -542,12 +630,26 @@ namespace MI
                 //path = currentDepthPath;
                 // All iterations
                 path.Add(currentDepthPath);
+
+                numberOfNodes = Math.Max(numberOfNodes, visited.Count);
+                collectedAllDiamonds = Goals.Count == 0;
             }
+
+            sw.Stop();
+
+            score = new Score("IDDFS", numberOfNodes, numberOfDiamonds, collectedAllDiamonds, sw.Elapsed);
+
             return path;
         }
 
-        public static List<Node> SolveCSP()
+        public static List<Node> SolveCSP(out Score score)
         {
+            Stopwatch sw = Stopwatch.StartNew();
+            Int64 numberOfNodes = -1;
+            Int32 numberOfDiamonds = 0;
+
+            List<Node> Goals = goals;
+
             List<Node> path = new List<Node>();
 
             Stack<Node> stack = new Stack<Node>();
@@ -563,6 +665,16 @@ namespace MI
                 CurrentNode = stack.Peek();
                 path.Add(CurrentNode);
 
+                numberOfNodes = Math.Max(stack.Count, numberOfNodes);
+
+                if (Goals.Contains(CurrentNode))
+                {
+                    Goals.Remove(CurrentNode);
+                    numberOfDiamonds++;
+                    if (Goals.Count == 0)
+                        break;
+                }
+
                 List<Node> neighbours = GetNodeWalkableNeighbours(CurrentNode.Position, true);
                 if (neighbours.Count > 0)
                 {
@@ -576,15 +688,28 @@ namespace MI
                     CurrentNode = stack.Pop();
                 }
             }
+
+            sw.Stop();
+
+            score = new Score("CSP", numberOfNodes, numberOfDiamonds, Goals.Count == 0, sw.Elapsed);
+
             return path;
         }
 
-        public static List<List<Node>> SolveSA(Double temperature, Double decrement)
+        public static List<List<Node>> SolveSA(out Score score)
         {
             Random random = new Random(DateTime.Now.Second);
             List<List<Node>> path = new List<List<Node>>();
-            for (Double currentTemperature = temperature; currentTemperature >= 0; currentTemperature -= decrement)
+
+            SortedSet<Score> scores = new SortedSet<Score>();
+
+            for (Decimal currentTemperature = startingTemperature; currentTemperature > 0; currentTemperature -= temperatureDecrement)
             {
+                Stopwatch temperatureSW = Stopwatch.StartNew();
+                Int64 temperatureNumberOfNodes = -1;
+                Int32 temperatureNumberOfDiamonds = 0;
+                Boolean temperatureAllDiamondsCollected = false;
+
                 List<Node> TemperatureRunPath = new List<Node>();
 
                 List<Node> Goals = new List<Node>(goals);
@@ -612,6 +737,8 @@ namespace MI
 
                     Node currentNode = startingNode;
 
+                    currentNode.SetHCost(closestGoal.Position);
+
                     currentNode.Visited = true;
                     visited.Add(currentNode);
 
@@ -624,6 +751,8 @@ namespace MI
                         currentNode = stack.Peek();
                         TemperatureRunPath.Add(currentNode);
 
+                        temperatureNumberOfNodes = Math.Max(temperatureNumberOfNodes, visited.Count);
+
                         if (currentNode == closestGoal)
                         {
                             GoalReached = true;
@@ -632,20 +761,25 @@ namespace MI
 
                         if (Goals.Contains(currentNode))
                         {
+                            temperatureNumberOfDiamonds++;
                             Goals.Remove(currentNode);
                         }
 
                         List<Node> neighbours = GetNodeWalkableNeighbours(currentNode.Position, true);
                         if (neighbours.Count > 0)
                         {
-                            Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
-                            neighbour.SetHCost(closestGoal.Position);
-                            if (neighbour.hCost < currentNode.hCost || (neighbour.hCost > currentNode.hCost && random.NextDouble() < temperature))
+                            while(true)
                             {
-                                neighbour.Visited = true;
-                                stack.Push(neighbour);
-                                TemperatureRunPath.Add(neighbour);
-                                visited.Add(neighbour);
+                                Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                                neighbour.SetHCost(closestGoal.Position);
+                                if (neighbour.hCost < currentNode.hCost || (neighbour.hCost > currentNode.hCost && currentTemperature > 0 && Convert.ToDecimal(random.NextDouble()) < currentTemperature))
+                                {
+                                    neighbour.Visited = true;
+                                    stack.Push(neighbour);
+                                    TemperatureRunPath.Add(neighbour);
+                                    visited.Add(neighbour);
+                                    break;
+                                }
                             }
                         }
                         else
@@ -656,16 +790,29 @@ namespace MI
 
                     if (GoalReached)
                     {
+                        temperatureNumberOfDiamonds++;
                         startingNode = closestGoal;
                         foreach (Node v in visited)
                         {
                             v.Visited = false;
                         }
                     }
+                    
+                    temperatureAllDiamondsCollected = temperatureNumberOfDiamonds == goals.Count;
+
                     Goals.Remove(closestGoal);
                 }
+
+                
+                temperatureSW.Stop();
+
+                scores.Add(new Score("SA",temperatureNumberOfNodes, temperatureNumberOfDiamonds, temperatureAllDiamondsCollected, temperatureSW.Elapsed));
+
                 path.Add(TemperatureRunPath);
             }
+            
+            score = scores.Max;
+
             return path;
         }
 

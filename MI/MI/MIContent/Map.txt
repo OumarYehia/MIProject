@@ -2,4 +2,7 @@ size 10 10
 initiallocation 0 0
 diamonds 4 3 6 0 9 6 8 9 0
 rocks 2 2 5 0 7
-walls 3 2 4 3 4 3 5 1 5
+walls 6 2 4 3 4 3 5 1 5
+iddfsmaxdepth 10
+sastartingtemperature 0.2
+satemperaturedecrement 0.1
