@@ -698,14 +698,15 @@ namespace MI
 
         public static List<List<Node>> SolveSA(out Score score)
         {
+            Stopwatch sw = Stopwatch.StartNew();
+
             Random random = new Random(DateTime.Now.Second);
             List<List<Node>> path = new List<List<Node>>();
 
-            SortedSet<Score> scores = new SortedSet<Score>();
+            SortedSet<Score> scores = new SortedSet<Score>(Score.ComparerOnAndNumberOfDiamondsAndNodes());
 
             for (Decimal currentTemperature = startingTemperature; currentTemperature > 0; currentTemperature -= temperatureDecrement)
             {
-                Stopwatch temperatureSW = Stopwatch.StartNew();
                 Int64 temperatureNumberOfNodes = -1;
                 Int32 temperatureNumberOfDiamonds = 0;
                 Boolean temperatureAllDiamondsCollected = false;
@@ -804,14 +805,13 @@ namespace MI
                 }
 
                 
-                temperatureSW.Stop();
-
-                scores.Add(new Score("SA",temperatureNumberOfNodes, temperatureNumberOfDiamonds, temperatureAllDiamondsCollected, temperatureSW.Elapsed));
+                scores.Add(new Score("SA",temperatureNumberOfNodes, temperatureNumberOfDiamonds, temperatureAllDiamondsCollected, sw.Elapsed));
 
                 path.Add(TemperatureRunPath);
             }
             
             score = scores.Max;
+            score.TimeElapsed = sw.Elapsed;
 
             return path;
         }

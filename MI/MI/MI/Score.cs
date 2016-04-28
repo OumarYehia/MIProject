@@ -22,6 +22,20 @@ namespace MI
             TimeElapsed = timeElapsed;
         }
 
+
+        private class ScoreComparerOnAndNumberOfDiamondsAndNodes : IComparer<Score>
+        {
+            int IComparer<Score>.Compare(Score a, Score b)
+            {
+                if (a == null || b == null) throw new NullReferenceException();
+
+                if (a.NumberOfDiamonds == b.NumberOfDiamonds)
+                    return a.NumberOfNodes.CompareTo(b.NumberOfNodes);
+                else
+                    return a.NumberOfDiamonds.CompareTo(b.NumberOfDiamonds);
+            }
+        }
+        
         public int CompareTo(Score otherScore)
         {
             if (otherScore == null) throw new NullReferenceException();
@@ -31,5 +45,11 @@ namespace MI
             else
                 return this.NumberOfDiamonds.CompareTo(otherScore.NumberOfDiamonds);
         }
+
+        public static IComparer<Score> ComparerOnAndNumberOfDiamondsAndNodes()
+        {
+            return (IComparer<Score>)new ScoreComparerOnAndNumberOfDiamondsAndNodes();
+        }
     }
+
 }
