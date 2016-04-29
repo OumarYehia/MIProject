@@ -24,8 +24,8 @@ namespace MI
         private static Int32 mapXMaxPosition = 560, mapYMaxPosition = 580;
         private static Point currentPlayerPosition= new Point(0,0);
         private static Int32 pathIndex = 0, multiPathIndex = 0;
-        private static Decimal startingTemperature = 0.3M, temperatureDecrement = 0.1M;
-        private static Int32 maxDepth = 20;
+        private static Decimal SATemperature = 0.3M;
+        private static Int32 IDDFSMaxDepth = 20;
         private static Int32 collectedDiamonds = 0;
         private static Boolean gameOver = false;
         private static Int32 diamondFrameCounter = 0, currentDiamondFrame = 0;
@@ -125,13 +125,10 @@ namespace MI
                             }
                             break;
                         case "iddfsmaxdepth":
-                            maxDepth = Int32.Parse(tokens[1]);
+                            IDDFSMaxDepth = Int32.Parse(tokens[1]);
                             break;
-                        case "sastartingtemperature":
-                            startingTemperature = Decimal.Parse(tokens[1]);
-                            break;
-                        case "satemperaturedecrement":
-                            temperatureDecrement = Decimal.Parse(tokens[1]);
+                        case "satemperature":
+                            SATemperature = Decimal.Parse(tokens[1]);
                             break;
                     }
                 }
@@ -203,16 +200,16 @@ namespace MI
                         MovePlayerFromPath(gameTime);
                     break;
                 case GameState.SA_MODE:
-                    if (multiPath == null)
+                    if (path == null)
                     {
                         Score score;
-                        multiPath = SolveSA(out score);
+                        path = SolveSA(out score);
                         ComputerScores.Add(score);
                         Scores.Add(score);
                         SAScores.Add(score);
                     }
                     if (!gameOver)
-                        MovePlayerFrom2DPath(gameTime, true);
+                        MovePlayerFromPath(gameTime);
                     break;
             }
 
@@ -302,7 +299,7 @@ namespace MI
                         break;
                     case GameState.SA_MODE:
                         spriteBatch.DrawString(Resources.menuButtonsFont, "current temp", currentLevelTextPosition, Resources.normalFontColor);
-                        spriteBatch.DrawString(Resources.menuButtonsFont, String.Format("{0:N2}", (startingTemperature - (temperatureDecrement * multiPathIndex))), currentLevelNumberTextPosition, Resources.normalFontColor);
+                        spriteBatch.DrawString(Resources.menuButtonsFont, String.Format("{0:N2}", (SATemperature - (SATemperature * multiPathIndex))), currentLevelNumberTextPosition, Resources.normalFontColor);
                         break;
                 }
             }
@@ -395,7 +392,7 @@ namespace MI
             }
         }
 
-        private static void MovePlayerFrom2DPath(GameTime gameTime, Boolean reset = false)
+        private static void MovePlayerFrom2DPath(GameTime gameTime)
         {   
             if (multiPathIndex < multiPath.Count && gameTime.TotalGameTime.TotalSeconds - prevGameTime.TotalGameTime.TotalSeconds > 0.02)
             {
@@ -423,11 +420,6 @@ namespace MI
                     multiPathIndex++;
                     currentPlayerPosition = new Point(initialLocation.X, initialLocation.Y);
                     pathIndex = 0;
-                    if(reset)
-                    {
-                        LoadMap();
-                        collectedDiamonds = 0;
-                    }
                 }
             }
             else if (multiPathIndex == multiPath.Count)
@@ -575,7 +567,7 @@ namespace MI
             Boolean collectedAllDiamonds = false;
 
             List<List<Node>> path = new List<List<Node>>();
-            for (int currentDepth = 0; currentDepth < maxDepth && !collectedAllDiamonds; currentDepth++)
+            for (int currentDepth = 0; currentDepth < IDDFSMaxDepth && !collectedAllDiamonds; currentDepth++)
             {
                 List<Node> Goals = goals;
 
@@ -696,123 +688,110 @@ namespace MI
             return path;
         }
 
-        public static List<List<Node>> SolveSA(out Score score)
+        public static List<Node> SolveSA(out Score score)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
             Random random = new Random(DateTime.Now.Second);
-            List<List<Node>> path = new List<List<Node>>();
 
-            SortedSet<Score> scores = new SortedSet<Score>(Score.ComparerOnAndNumberOfDiamondsAndNodes());
+            Int64 numberOfNodes = -1;
+            Int32 numberOfDiamonds = 0;
+            Boolean allDiamondsCollected = false;
 
-            for (Decimal currentTemperature = startingTemperature; currentTemperature > 0; currentTemperature -= temperatureDecrement)
+            List<Node> path = new List<Node>();
+
+            List<Node> Goals = new List<Node>(goals);
+
+            Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
+
+            while (Goals.Count > 0)
             {
-                Int64 temperatureNumberOfNodes = -1;
-                Int32 temperatureNumberOfDiamonds = 0;
-                Boolean temperatureAllDiamondsCollected = false;
+                Node closestGoal = Goals[0];
 
-                List<Node> TemperatureRunPath = new List<Node>();
+                Int32 distanceToGoal = GetManhattanDistance(startingNode.Position, closestGoal.Position);
 
-                List<Node> Goals = new List<Node>(goals);
-
-                Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
-
-                while (Goals.Count > 0)
+                for (int i = 1; i < Goals.Count; i++)
                 {
-                    Node closestGoal = Goals[0];
-
-                    Int32 distanceToGoal = GetManhattanDistance(startingNode.Position, closestGoal.Position);
-
-                    for (int i = 1; i < Goals.Count; i++)
+                    Int32 distanceToClosestGoalCandidate = GetManhattanDistance(startingNode.Position, Goals[i].Position);
+                    if (distanceToClosestGoalCandidate < distanceToGoal)
                     {
-                        Int32 distanceToClosestGoalCandidate = GetManhattanDistance(startingNode.Position, Goals[i].Position);
-                        if (distanceToClosestGoalCandidate < distanceToGoal)
-                        {
-                            distanceToGoal = distanceToClosestGoalCandidate;
-                            closestGoal = Goals[i];
-                        }
+                        distanceToGoal = distanceToClosestGoalCandidate;
+                        closestGoal = Goals[i];
                     }
-
-                    Stack<Node> stack = new Stack<Node>();
-                    List<Node> visited = new List<Node>();
-
-                    Node currentNode = startingNode;
-
-                    currentNode.SetHCost(closestGoal.Position);
-
-                    currentNode.Visited = true;
-                    visited.Add(currentNode);
-
-                    stack.Push(currentNode);
-
-                    Boolean GoalReached = false;
-
-                    while (stack.Count > 0)
-                    {
-                        currentNode = stack.Peek();
-                        TemperatureRunPath.Add(currentNode);
-
-                        temperatureNumberOfNodes = Math.Max(temperatureNumberOfNodes, visited.Count);
-
-                        if (currentNode == closestGoal)
-                        {
-                            GoalReached = true;
-                            break;
-                        }
-
-                        if (Goals.Contains(currentNode))
-                        {
-                            temperatureNumberOfDiamonds++;
-                            Goals.Remove(currentNode);
-                        }
-
-                        List<Node> neighbours = GetNodeWalkableNeighbours(currentNode.Position, true);
-                        if (neighbours.Count > 0)
-                        {
-                            while(true)
-                            {
-                                Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
-                                neighbour.SetHCost(closestGoal.Position);
-                                if (neighbour.hCost < currentNode.hCost || (neighbour.hCost > currentNode.hCost && currentTemperature > 0 && Convert.ToDecimal(random.NextDouble()) < currentTemperature))
-                                {
-                                    neighbour.Visited = true;
-                                    stack.Push(neighbour);
-                                    TemperatureRunPath.Add(neighbour);
-                                    visited.Add(neighbour);
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            currentNode = stack.Pop();
-                        }
-                    }
-
-                    if (GoalReached)
-                    {
-                        temperatureNumberOfDiamonds++;
-                        startingNode = closestGoal;
-                        foreach (Node v in visited)
-                        {
-                            v.Visited = false;
-                        }
-                    }
-                    
-                    temperatureAllDiamondsCollected = temperatureNumberOfDiamonds == goals.Count;
-
-                    Goals.Remove(closestGoal);
                 }
 
+                Stack<Node> stack = new Stack<Node>();
+                List<Node> visited = new List<Node>();
+
+                Node currentNode = startingNode;
+
+                currentNode.SetHCost(closestGoal.Position);
+
+                currentNode.Visited = true;
+                visited.Add(currentNode);
+
+                stack.Push(currentNode);
+
+                Boolean GoalReached = false;
+
+                while (stack.Count > 0)
+                {
+                    currentNode = stack.Peek();
+                    path.Add(currentNode);
+
+                    numberOfNodes = Math.Max(numberOfNodes, visited.Count);
+
+                    if (currentNode == closestGoal)
+                    {
+                        GoalReached = true;
+                        break;
+                    }
+
+                    if (Goals.Contains(currentNode))
+                    {
+                        numberOfDiamonds++;
+                        Goals.Remove(currentNode);
+                    }
+
+                    List<Node> neighbours = GetNodeWalkableNeighbours(currentNode.Position, true);
+                    if (neighbours.Count > 0)
+                    {
+                        while(true)
+                        {
+                            Node neighbour = neighbours.OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+                            neighbour.SetHCost(closestGoal.Position);
+                            if (neighbour.hCost < currentNode.hCost || (neighbour.hCost > currentNode.hCost && Convert.ToDecimal(random.NextDouble()) < SATemperature))
+                            {
+                                neighbour.Visited = true;
+                                stack.Push(neighbour);
+                                path.Add(neighbour);
+                                visited.Add(neighbour);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        currentNode = stack.Pop();
+                    }
+                }
+
+                if (GoalReached)
+                {
+                    numberOfDiamonds++;
+                    startingNode = closestGoal;
+                    foreach (Node v in visited)
+                    {
+                        v.Visited = false;
+                    }
+                }
                 
-                scores.Add(new Score("SA",temperatureNumberOfNodes, temperatureNumberOfDiamonds, temperatureAllDiamondsCollected, sw.Elapsed));
-
-                path.Add(TemperatureRunPath);
+                Goals.Remove(closestGoal);
             }
-            
-            score = scores.Max;
-            score.TimeElapsed = sw.Elapsed;
 
+
+            score = new Score("SA", numberOfNodes, numberOfDiamonds, numberOfDiamonds == goals.Count, sw.Elapsed);
+            
             return path;
         }
 
