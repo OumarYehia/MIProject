@@ -58,6 +58,7 @@ namespace MI
             // TODO: use this.Content to load your game content here
             customCursor = Content.Load<Texture2D>("Cursors/Select");
             Resources.LoadContent(Content);
+            GameHandler.LoadScores();
         }
 
         /// <summary>
@@ -151,6 +152,13 @@ namespace MI
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected override void OnExiting(Object sender, EventArgs args)
+        {
+            GameHandler.SaveScores();
+
+            base.OnExiting(sender, args);
         }
     }
 }

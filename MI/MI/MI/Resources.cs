@@ -27,6 +27,9 @@ namespace MI
         // MapFile
         public static String mapFilePath;
 
+        // ScoresFile
+        public static String scoresFilePath;
+
         public static void LoadContent(ContentManager content)
         {
             mainMenuBackground = content.Load<Texture2D>("Images/MainMenuBackground");
@@ -52,6 +55,8 @@ namespace MI
             backgroundMusicInstance = backgroundMusic.CreateInstance();
 
             mapFilePath = content.RootDirectory + "\\Map.txt";
+
+            scoresFilePath = content.RootDirectory + "\\Scores.txt";
         }
     }
 }

@@ -140,6 +140,43 @@ namespace MI
             }
         }
 
+        public static void LoadScores()
+        {
+            if(File.Exists(Resources.scoresFilePath))
+            {
+                StreamReader input = new StreamReader(Resources.scoresFilePath);
+                String line;
+                String[] tokens;
+                try
+                {
+                    while ((line = input.ReadLine()) != null && (tokens = line.Split(' ')).Length == 5)
+                    {
+                        Score score = new Score(tokens[0],Int32.Parse(tokens[1]), Int32.Parse(tokens[2]), Boolean.Parse(tokens[3]), TimeSpan.Parse(tokens[4]));
+                        Scores.Add(score);
+                        if(score.AlgorithmName == "Human")
+                        {
+                            HumanScores.Add(score);
+                        }
+                        else
+                        {
+                            ComputerScores.Add(score);
+                            if (score.AlgorithmName == "SA")
+                                SAScores.Add(score);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw (ex);
+                }
+            }
+            else
+            {
+                File.Create(Resources.scoresFilePath);
+            }
+        }
+
         public static void Update(GameTime gameTime, Game1 game, GameState gameState)
         {
             if (prevGameTime == null)
@@ -458,7 +495,7 @@ namespace MI
             Int64 numberOfNodes = -1;
             Int32 numberOfDiamonds = 0;
 
-            List<Node> Goals = goals, path = new List<Node>();
+            List<Node> Goals = new List<Node>(goals), path = new List<Node>();
             Node startingNode = nodeGrid[initialLocation.X, initialLocation.Y];
 
             while (Goals.Count > 0)
@@ -554,7 +591,7 @@ namespace MI
             
             sw.Stop();
 
-            score = new Score("A star", numberOfNodes, numberOfDiamonds, numberOfDiamonds == goals.Count, sw.Elapsed);
+            score = new Score("A*", numberOfNodes, numberOfDiamonds, numberOfDiamonds == goals.Count, sw.Elapsed);
 
             return path;
         }
@@ -696,7 +733,6 @@ namespace MI
 
             Int64 numberOfNodes = -1;
             Int32 numberOfDiamonds = 0;
-            Boolean allDiamondsCollected = false;
 
             List<Node> path = new List<Node>();
 
@@ -856,7 +892,15 @@ namespace MI
             flipped.SetData<Color>(flippedData);
 
             return flipped;
-        }  
+        }
 
+        // Save scores
+        public static void SaveScores()
+        {
+            StreamWriter scoresFile = new StreamWriter(Resources.scoresFilePath, false);
+            foreach(Score s in Scores)
+                scoresFile.WriteLine(String.Format("{0} {1} {2} {3} {4}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString()));
+            scoresFile.Close();
+        }
     }
 }
