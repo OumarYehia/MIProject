@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace MI
 {
@@ -149,7 +150,7 @@ namespace MI
                 String[] tokens;
                 try
                 {
-                    while ((line = input.ReadLine()) != null && (tokens = line.Split(' ')).Length == 5)
+                    while ((line = input.ReadLine()) != null && (tokens = Regex.Split(line, @"\s+")).Length == 5)
                     {
                         Score score = new Score(tokens[0],Int32.Parse(tokens[1]), Int32.Parse(tokens[2]), Boolean.Parse(tokens[3]), TimeSpan.Parse(tokens[4]));
                         Scores.Add(score);
@@ -169,6 +170,10 @@ namespace MI
                 catch (Exception ex)
                 {
                     throw (ex);
+                }
+                finally
+                {
+                    input.Close();
                 }
             }
             else
@@ -899,7 +904,7 @@ namespace MI
         {
             StreamWriter scoresFile = new StreamWriter(Resources.scoresFilePath, false);
             foreach(Score s in Scores)
-                scoresFile.WriteLine(String.Format("{0} {1} {2} {3} {4}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString()));
+                scoresFile.WriteLine(String.Format("{0} {1,10} {2,10} {3,10} {4,25}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString()));
             scoresFile.Close();
         }
     }
