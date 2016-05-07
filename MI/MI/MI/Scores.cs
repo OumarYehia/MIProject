@@ -13,7 +13,8 @@ namespace MI
         //  Positions: Buttons, Buttons Texts
         private static Vector2 backButtonPosition = new Vector2(50, 525), computerScoresButtonPosition = new Vector2(30, 150), humanScoresButtonPosition = new Vector2(30, 220), mixedScoresButtonPosition = new Vector2(30, 300), SAScoresButtonPosition = new Vector2(30, 380);
         private static Vector2 backButtonTextPosition = new Vector2(100.0f, 547.5f), computerScoresButtonTextPosition = new Vector2(130f, 172.5f), humanScoresButtonTextPosition = new Vector2(130f, 242.5f), mixedScoresButtonTextPosition = new Vector2(130f, 322.5f), SAScoresButtonTextPosition = new Vector2(130f, 402.5f);
-
+        private static Vector2 scoresTableHeaderPosition = new Vector2(300, 150);
+        
         // Previous Mouse State: Used for detecting single clicks
         private static MouseState prevMouseState = Mouse.GetState();
 
@@ -103,6 +104,24 @@ namespace MI
             spriteBatch.DrawString(Resources.menuButtonsFont, "mixed", mixedScoresButtonTextPosition, mixedScoresHover ? Resources.hoverFontColor : Resources.normalFontColor);
             spriteBatch.Draw(scoreType == ScoreType.SA ? Resources.checkboxCheckedBackground : Resources.checkboxUncheckedBackground, SAScoresButtonPosition, Color.White);
             spriteBatch.DrawString(Resources.menuButtonsFont, "SA", SAScoresButtonTextPosition, SAScoresHover ? Resources.hoverFontColor : Resources.normalFontColor);
+
+            //Table
+            spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,10} {2,10} {3,15} {4,5}", "Alg", "#Nodes", "#Diamonds", "All Diamonds", "Time"), scoresTableHeaderPosition, Color.White);
+            switch (scoreType)
+            {
+                case(ScoreType.COMPUTER):
+                    printScores(spriteBatch, GameHandler.ComputerScores);
+                    break;
+                case (ScoreType.HUMAN):
+                    printScores(spriteBatch, GameHandler.HumanScores);
+                    break;
+                case (ScoreType.MIXED):
+                    printScores(spriteBatch, GameHandler.Scores);
+                    break;
+                case (ScoreType.SA):
+                    printScores(spriteBatch, GameHandler.SAScores);
+                    break;
+            }
         }
 
         public static void Reset()
@@ -110,6 +129,38 @@ namespace MI
             backHover = computerScoresHover = humanScoresHover = mixedScoresHover = SAScoresHover = false;
             scoreType = ScoreType.COMPUTER;
             prevMouseState = new MouseState(0, 0, 0, ButtonState.Released, ButtonState.Released, ButtonState.Released, ButtonState.Released, ButtonState.Released);
+        }
+
+        private static void printScores(SpriteBatch spriteBatch, SortedSet<Score> scoresSet)
+        {
+            int j = 1;
+            for (int i = 0; i < 10 && i < scoresSet.Count; i++)
+            {
+                Score s = scoresSet.ElementAt(i);
+                switch (s.AlgorithmName)
+                {
+                    case "IDDFS":
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
+                        j++;
+                        break;
+                    case "A*":
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,12} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
+                        j++;
+                        break;
+                    case "SA":
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,11} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
+                        j++;
+                        break;
+                    case "CSP":
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,10} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
+                        j++;
+                        break;
+                    case "Human":
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
+                        j++;
+                        break;
+                }
+            }
         }
     }
 

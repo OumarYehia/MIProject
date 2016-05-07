@@ -16,7 +16,8 @@ namespace MI
         public static Texture2D mainMenuBackground, scoresBackground, buttonBackground, startOptionsButtonBackground, checkboxCheckedBackground, checkboxUncheckedBackground, gameMapBackground, dirtTile, playerTile, emptyTile, diamondTile, rockTile, wallTile, deadTile;
         
         // Font
-        public static SpriteFont menuButtonsFont;
+        public static SpriteFont menuButtonsFont, scoresFont;
+
         // Font Colors
         public static Color normalFontColor = Color.FromNonPremultiplied(239, 167, 20, 255), hoverFontColor = Color.FromNonPremultiplied(196, 18, 1, 255);
 
@@ -47,6 +48,7 @@ namespace MI
             checkboxUncheckedBackground = content.Load<Texture2D>("Images/CheckBox_Unchecked");
             startOptionsButtonBackground = content.Load<Texture2D>("Images/StartOptionsButtonBackground");
             menuButtonsFont = content.Load<SpriteFont>("Fonts/MenuButtonsFont");
+            scoresFont = content.Load<SpriteFont>("Fonts/ScoresFont");
 
             pickupDiamond = content.Load<SoundEffect>("Audio/Pickup_Coin4");
             tada = content.Load<SoundEffect>("Audio/Tada");
