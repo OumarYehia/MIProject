@@ -133,31 +133,25 @@ namespace MI
 
         private static void printScores(SpriteBatch spriteBatch, SortedSet<Score> scoresSet)
         {
-            int j = 1;
             for (int i = 0; i < 10 && i < scoresSet.Count; i++)
             {
                 Score s = scoresSet.ElementAt(i);
                 switch (s.AlgorithmName)
                 {
                     case "IDDFS":
-                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
-                        j++;
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + ((i + 1) * 50)), Color.White);
                         break;
                     case "A*":
-                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,12} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
-                        j++;
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,12} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + ((i + 1) * 50)), Color.White);
                         break;
                     case "SA":
-                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,11} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
-                        j++;
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,11} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + ((i + 1) * 50)), Color.White);
                         break;
                     case "CSP":
-                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,10} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
-                        j++;
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,10} {2,14} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + ((i + 1) * 50)), Color.White);
                         break;
                     case "Human":
-                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + (j * 50)), Color.White);
-                        j++;
+                        spriteBatch.DrawString(Resources.scoresFont, String.Format("{0} {1,5} {2,15} {3,15} {4,15}", s.AlgorithmName, s.NumberOfNodes, s.NumberOfDiamonds, s.AllDiamondsCollected, s.TimeElapsed.ToString(@"mm\:ss\:ffffff")), new Vector2(scoresTableHeaderPosition.X, scoresTableHeaderPosition.Y + ((i + 1) * 50)), Color.White);
                         break;
                 }
             }
