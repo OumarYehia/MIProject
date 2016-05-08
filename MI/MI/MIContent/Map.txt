@@ -1,7 +1,13 @@
 size 10 10
-initiallocation 0 0
-diamonds 4 3 6 0 9 6 8 9 0
-rocks 2 2 5 0 7
-walls 6 2 4 3 4 3 5 1 5
+
+initiallocation 6 5
+
+diamonds 4 3 8 4 7 8 5 7 9
+
+rocks 6 2 5 5 7 1 7 9 4 4 5 9 9
+
+walls 8 2 2 3 2 4 2 7 4 7 5 7 6 7 7 7 8
+
 iddfsmaxdepth 20
+
 satemperature 0.4
